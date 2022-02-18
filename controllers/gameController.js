@@ -1,88 +1,116 @@
 const scoreGenerator = require('./ScoreGenerator')
 
 const addSpin = require('../database/addSpin')
-const newSession = require('../database/newSession')
-const getSession = require('../database/getSession')
-const stopSession = require('../database/stopSession')
-const setCoins = require('../database/setCoins')
-const setBet = require('../database/setBet')
-const setWin = require('../database/setWin')
+const newSessionId = require('../database/newSessionId')
+const getSessionById = require('../database/getSessionById')
+const stopSessionById = require('../database/stopSessionById')
+const updateCoinsBySessionId = require('../database/updateCoinsBySessionId')
+const updateBetBySessionId = require('../database/updateBetBySessionId')
+const updateWinBySessionId = require('../database/updateWinBySessionId')
 
 
 // SESSION
 
-exports.newSession = async (req, res) => {
-    const sessionData = await newSession()
-    res.json(sessionData)
+exports.newSession = async (req, res, next) => {
+    try {
+        const session = await newSessionId()
+        if (session) res.json(session)
+        else throw new Error('db response error')
+    }
+    catch (error) { next(error) }
 }
 
 
-exports.getSessionById = async (req, res) => {
-    const sessionId = req.params.sessionId
-    const sessionData = await getSession(sessionId)
-    res.json(sessionData)
+exports.getSession = async (req, res, next) => {
+    try {
+        const sessionId = req.params.sessionId
+        const session = await getSessionById(sessionId)
+        if (session) { res.json(session) }
+        else throw new Error('db response error')
+    }
+    catch (error) { next(error) }
 }
 
 
-exports.stopSessionById = async (req, res) => {
-    const sessionId = req.params.sessionId
-    const sessionData = await stopSession(sessionId)
-    if (sessionData) res.json('ok')
-    else res.status(401).json('stop session error')
+exports.stopSession = async (req, res, next) => {
+    try {
+        const sessionId = req.params.sessionId
+        const sessionData = await stopSessionById(sessionId)
+        if (sessionData) { res.json(sessionData) }
+        else throw new Error('db response error')
+    }
+    catch (error) { next(error) }
 }
 
 
 // BET
 
-exports.betUp = async (req, res) => {
-    const sessionId = req.params.sessionId
-    const sessionData = await getSession(sessionId)
-    let bet = parseInt(sessionData.bet)
-    const result = await setBet(sessionId, bet + 1)
-    if (result) res.json(bet + 1)
-    else res.status(401).json('bet up error')
+exports.betUp = async (req, res, next) => {
+    try {
+        const sessionId = req.params.sessionId
+        const sessionData = await getSessionById(sessionId)
+        if (sessionData) { 
+            let bet = parseInt(sessionData.bet)
+            const result = await updateBetBySessionId(sessionId, bet + 1)
+            if (result) res.json(bet + 1)
+            else throw new Error('db response error')
+        }
+        else throw new Error('db response error')
+    }
+    catch (error) { next(error) }
 }
 
 
-exports.betDown = async (req, res) => {
-    const sessionId = req.params.sessionId
-    const sessionData = await getSession(sessionId)
-    let bet = parseInt(sessionData.bet)
-    if (bet > 1) {
-        const result = await setBet(sessionId, bet - 1)
-        if (result) res.json(bet - 1)
-        else res.status(401).json('bet down error')
-    } 
-    else res.json(bet)
+exports.betDown = async (req, res, next) => {
+    try {
+        const sessionId = req.params.sessionId
+        const sessionData = await getSessionById(sessionId)
+        if (sessionData) {
+            let bet = parseInt(sessionData.bet)
+            if (bet > 1) {
+                const result = await updateBetBySessionId(sessionId, bet - 1)
+                if (result) res.json(bet - 1)
+                else throw new Error('db response error')
+            }
+        }
+        else throw new Error('db response error')
+    }
+    catch (error) { next(error) }
 }
 
 
 // SPIN
 
-exports.spin = async (req, res) => {
-    const score = scoreGenerator.getScore()
-    const board = scoreGenerator.getBoard(score)
-
-    const sessionId = req.params.sessionId
-    const sessionData = await getSession(sessionId)
-
-    const bet = parseInt(sessionData.bet)
-    const spin = await addSpin(sessionId, score, bet)
-    const coins = await setCoins(sessionId, parseInt(sessionData.coins - bet))
-    const win = await setWin(sessionId, parseInt(sessionData.win + parseInt(spin.score) * bet))
-
-    console.log(`session: ${sessionId}, score: ${score}, bet: ${bet} `)
-    console.log(board)
-
-    res.json({
-        board: board,
-        coins: coins,
-        bet: bet,
-        win: win
-    })
+exports.spin = async (req, res, next) => {
+    try {
+        const score = scoreGenerator.getScore()
+        const board = scoreGenerator.getBoard(score)
+        const sessionId = req.params.sessionId
+        const sessionData = await getSessionById(sessionId)
+        if (sessionData) {
+            const bet = parseInt(sessionData.bet)
+            const spin = await addSpin(sessionId, score, bet)
+            if (spin) {
+                const coins = await updateCoinsBySessionId(sessionId, parseInt(sessionData.coins - bet))
+                const win = await updateWinBySessionId(sessionId, parseInt(sessionData.win + parseInt(spin.score) * bet))
+                if (coins && win) {
+                    res.json({
+                        board: board,
+                        coins: coins,
+                        bet: bet,
+                        win: win
+                    })
+                    console.log(`session: ${sessionId}, score: ${score}, bet: ${bet} `)
+                    console.log(board)
+                }
+                else throw new Error('db response error')
+            }
+            else throw new Error('db response error')
+        }
+        else throw new Error('db response error')
+    }
+    catch (error) { next(error) }
 }
-
-
 
 
 

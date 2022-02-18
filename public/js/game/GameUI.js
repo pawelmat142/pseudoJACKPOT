@@ -34,9 +34,10 @@ export class GameUI {
 
     sessionInit = async () => {
         let sessionId = localStorage.getItem('sessionId')
-        if (!sessionId) 
-            localStorage.setItem('sessionId', await this.http.newSession())
-
+        if (!sessionId) {
+            const newSession = await this.http.newSession()
+            localStorage.setItem('sessionId', newSession)
+        }
         const sessions = localStorageSetSessions()
         console.log(sessions)
 

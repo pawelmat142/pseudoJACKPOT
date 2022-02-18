@@ -71,6 +71,7 @@ export class HttpClient {
         }
         catch (error) {
             return error
+            console.log(error)
         }
     }
 
@@ -81,10 +82,15 @@ export class HttpClient {
 const get = async (url) => {
     try {
         let response = await fetch(url)
-        if (response.ok) return await response.json()
+        if (response.ok) {
+            return await response.json()
+        }
         else throw new Error(response.status)
     }
-    catch (error) {return error}
+    catch (error) {
+        console.log(error)
+        return error
+    }
 }
 
 
@@ -98,6 +104,9 @@ const post = async (url, data) => {
         if (response.ok) return await response.json()
         else throw new Error(response.status)
     }
-    catch (error) {return error}
+    catch (error) {
+        console.log(error)
+        return error
+    }
 }
 

@@ -1,20 +1,18 @@
 module.exports = async (_sessionId, _score, _bet) => {
-
     const {db_config} = require('../config')
     const knex = require('knex')(db_config)
+    let result = false
 
-    try {
-        const spin = {
-            session_id: _sessionId,
-            score: _score,
-            bet: _bet
-        }
-
-        await knex('spins').insert(spin)
-        return spin
+    const spin = {
+        session_id: _sessionId,
+        score: _score,
+        bet: _bet
     }
 
-    catch (err) { return err }
-    
-    finally { knex.destroy() }
+    const spinId = await knex('spins').insert(spin)
+
+    if (spinId) result = spin
+
+    knex.destroy()
+    return result
 }
