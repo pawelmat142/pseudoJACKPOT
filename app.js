@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 // app.use(bodyParser.json())
 // app.use(cookieParser())
 
-console.log(db_config.connection)
+// console.log(db_config.connection)
 
 // routes
 app.use('/', router)

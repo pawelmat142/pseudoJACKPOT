@@ -2,9 +2,10 @@ export class HttpClient {
 
     constructor() {
         this.url = '/'
+
+        this.sessionId = localStorage.getItem('sessionId')
     }
 
-    get sessionId() { return localStorage.getItem('sessionId') }
 
 
     // SESSION
@@ -74,8 +75,6 @@ export class HttpClient {
             console.log(error)
         }
     }
-
-
 }
 
 

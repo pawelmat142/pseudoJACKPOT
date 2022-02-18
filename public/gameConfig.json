@@ -23,12 +23,15 @@
 
 
   "rollConfig": {
-    "minInterval": 1,
-    "maxInterval": 20,
-    "stopInterval": 20,
-    "step": 2,
-    "stopDelay": 700,
-    "startDelay": 150
+    "minInterval": 0.1,
+    "maxInterval": 10,
+    "stopInterval": 12,
+    "step": 4,
+
+    "stopDelay": 200,
+    "startDelay": 50,
+
+    "spinTime": 800
   },
   
 

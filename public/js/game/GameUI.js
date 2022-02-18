@@ -84,7 +84,7 @@ export class GameUI {
             setTimeout(() => {
                 this.board.stop()
                 this.win.set(response.win)
-            }, 2000)
+            }, config.rollConfig.spinTime)
         }
     }
     
