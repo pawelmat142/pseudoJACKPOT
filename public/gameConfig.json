@@ -1,0 +1,67 @@
+{
+  "board": {
+    "rows": 3,
+    "cols": 3
+  },
+
+  
+  "DOMids": {
+    "board": "game-board",
+
+    "coins": "coins",
+    "bet": "bet",
+    "win": "win",
+
+    "controls": {
+      "betUp": "bet-up",
+      "betDown": "bet-down",
+      "transfer": "transfer",
+      "reset": "reset",
+      "spin": "spin"
+    }
+  },
+
+
+  "rollConfig": {
+    "minInterval": 1,
+    "maxInterval": 20,
+    "stopInterval": 20,
+    "step": 2,
+    "stopDelay": 700,
+    "startDelay": 150
+  },
+  
+
+  "availableItems": [
+    {
+      "name": "W",
+      "src": "../img/W.png",
+      "score": 1,
+      "description": "Cherry"
+    },
+    {
+      "name": "C",
+      "src": "../img/C.png",
+      "score": 2,
+      "description": "Lemon"
+    },
+    {
+      "name": "P",
+      "src": "../img/P.png",
+      "score": 5,
+      "description": "Orange"
+    },
+    {
+      "name": "A",
+      "src": "../img/A.png",
+      "score": 10,
+      "description": "Watermelon"
+    },
+    {
+      "name": "S",
+      "src": "../img/S.png",
+      "score": 20,
+      "description": "Sevens"
+    }
+  ]
+}

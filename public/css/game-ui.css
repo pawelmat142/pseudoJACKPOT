@@ -1,0 +1,76 @@
+/* UI */
+#game-ui {
+    width: 50%;
+}
+
+/* display */
+#game-ui .display {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr;
+    column-gap: 20px;
+    width: 100%;
+}
+
+#game-ui .display > div {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 12px 20px 15px;
+    border: 1px solid tomato;
+    background:rgba(255, 99, 71, 0.404);
+    border-radius: 10px;
+    position: relative;
+}
+
+#game-ui .display > div p { 
+    font-size: 45px;
+    color: #ed143d;
+}
+
+#game-ui .display > div::before {
+    width: 50%;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 80%);
+    border: 1px solid tomato;
+    border-radius: 7px;
+    background: brown;
+    color: white;
+    font-size: 20px;
+    padding: 5px 5px;
+    text-align: center;
+}
+
+#game-ui .display > div:nth-child(1):before { content: "COINS"}
+#game-ui .display > div:nth-child(2):before { content: "BET"}
+#game-ui .display > div:nth-child(3):before { content: "WIN"}
+
+
+/* controls */
+#game-ui .controls {
+    width: 130%;
+    padding-top: 50px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    column-gap: 20px;
+}
+
+#game-ui .controls > button {
+    min-height: 70px;
+    border: 3px solid black;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 20px;
+    padding: 15px 15px 17px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#game-ui .controls > button:active {
+    background-color: #000;
+    color: #fff;
+    border-color: rgba(0, 0, 0, 0.527)
+}
