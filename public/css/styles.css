@@ -59,3 +59,9 @@ body {
     gap: 30px;
 }
 
+@media (max-width: 768px) {
+    body {
+        justify-content: unset;
+    }
+}
+

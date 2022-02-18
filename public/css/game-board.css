@@ -27,6 +27,7 @@
         width: 70vw;
         height: calc(70vw/1.618);
     }
+
 }
 
 @media (max-width: 768px) {
@@ -34,11 +35,20 @@
         width: 80vw;
         height: calc(80vw/1.618);
     }
+
+    #game-board .column img {
+        padding: 8% 12%;
+    }
+
 }
 
 @media (max-width: 576px) {
     #game-board {
         width: 95vw;
         height: calc(95vw/1.618);
+    }
+
+    #game-board .column img {
+        padding: 6% 9%;
     }
 }
