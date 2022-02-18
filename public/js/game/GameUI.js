@@ -8,10 +8,11 @@ String.prototype.capitalize = function() {
 
 export class GameUI {
 
-    constructor(gameBoard, httpClient) {
+    constructor(gameBoard, httpClient, audio) {
 
         this.board = gameBoard
         this.http = httpClient
+        this.audio = audio
 
         this.modal = new Modal()
 
@@ -75,17 +76,28 @@ export class GameUI {
 
     onSpin = async () => {
         if (!this.board.isRolling) {
-            this.board.start()
-            const response = await this.http.spin()
-    
-            this.board.setNewState(response.board)
-            this.coins.set(response.coins)
-            
-            setTimeout(() => {
+            this.audio.play()
+            try {
+                this.board.start()
+                const response = await this.http.spin()
+                console.log(response)
+                this.board.setNewState(response.board)
+                this.coins.set(response.coins)
+                setTimeout(() => {
+                    this.board.stop()
+                    this.win.set(response.win)
+                }, config.rollConfig.spinTime)
+            }
+            catch (error) {
+                console.log(error)
                 this.board.stop()
-                this.win.set(response.win)
-            }, config.rollConfig.spinTime)
+            }
+            
         }
+    }
+
+    onAudio = () => {
+        this.audio.play()
     }
     
 }

@@ -17,7 +17,8 @@
       "betDown": "bet-down",
       "transfer": "transfer",
       "reset": "reset",
-      "spin": "spin"
+      "spin": "spin",
+      "audio": "audio"
     }
   },
 
