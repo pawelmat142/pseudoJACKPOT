@@ -74,3 +74,55 @@
     color: #fff;
     border-color: rgba(0, 0, 0, 0.527)
 }
+
+
+
+@media (max-width: 768px) {
+
+    #game-ui {
+        width: 80%;
+    }
+
+
+    #game-ui .controls {
+        grid-template-columns: repeat(3, 1fr);
+        row-gap: 30px;
+        width: 100%;
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    #game-ui .display {
+        column-gap: 10px;
+        grid-template-columns: 6fr 5fr 6fr;
+    }
+
+    #game-ui .display > div {
+        padding: 5px 10px 6px;
+    }
+    #game-ui .display > div p {
+        font-size: 30px;
+    }
+
+    #game-ui .controls {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    #game-ui .controls > button {
+        padding: 10px 10px 11px;
+        font-size: 14px;
+        min-height: unset;
+    }
+
+    #game-ui .display > div::before {
+        width: 60%;
+        transform: translate(-50%, 80%);
+        font-size: 12px;
+        padding: 3px 5px;
+
+    }
+
+}

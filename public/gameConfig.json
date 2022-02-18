@@ -21,17 +21,17 @@
     }
   },
 
-
+  
   "rollConfig": {
     "minInterval": 0.1,
-    "maxInterval": 10,
-    "stopInterval": 12,
-    "step": 4,
+    "maxInterval": 8,    
+    "stopInterval": 12,   
+    "step": 4,            
 
-    "stopDelay": 200,
-    "startDelay": 50,
+    "stopDelay": 200,     
+    "startDelay": 50,     
 
-    "spinTime": 800
+    "spinTime": 500       
   },
   
 

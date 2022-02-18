@@ -1,6 +1,6 @@
 #game-board {
-    width: 50%;
-    height: 60%;
+    width: 50vw;
+    height: calc(50vw/1.618);
     display: flex;
     border: 1px solid red;
     overflow: hidden;
@@ -20,4 +20,25 @@
     padding: 12% 20%;
     height: 33%;
     object-fit: contain;
+}
+
+@media (max-width: 1200px) {
+    #game-board {
+        width: 70vw;
+        height: calc(70vw/1.618);
+    }
+}
+
+@media (max-width: 768px) {
+    #game-board {
+        width: 80vw;
+        height: calc(80vw/1.618);
+    }
+}
+
+@media (max-width: 576px) {
+    #game-board {
+        width: 95vw;
+        height: calc(95vw/1.618);
+    }
 }
