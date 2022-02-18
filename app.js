@@ -5,6 +5,7 @@ const {port} = require('./config')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const flash = require('connect-flash')
+const {db_config} = require('./config')
 
 const app = express()
 
@@ -16,6 +17,8 @@ app.use(express.static(path.join(__dirname, 'public')))
 // parser
 // app.use(bodyParser.json())
 // app.use(cookieParser())
+
+console.log(db_config.connection)
 
 // routes
 app.use('/', router)
