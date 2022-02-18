@@ -58,8 +58,7 @@ export class GameUI {
 
 
     onReset = async () => {
-        const res = await this.http.stopSession()
-        if (res === 'ok') {
+        if (await this.http.stopSession()) {
             const sessionId = await this.http.newSession()
             localStorage.setItem('sessionId', sessionId)
             this.setDisplayState(await this.http.getSessionData())
