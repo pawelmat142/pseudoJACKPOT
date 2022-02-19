@@ -17,11 +17,7 @@
     "knex": "^1.0.3",
     "mysql2": "^2.3.3"
   },
-  "devDependencies": {},
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/pawelmat142/gra.git"
-  },
+  "repository": "git+https://github.com/pawelmat142/gra.git",
   "bugs": {
     "url": "https://github.com/pawelmat142/gra/issues"
   },

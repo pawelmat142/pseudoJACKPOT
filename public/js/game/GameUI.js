@@ -27,11 +27,13 @@ export class GameUI {
 
 
     constrolsInit = () => {
-        for (let item in config.DOMids.controls) 
-            document.getElementById(config.DOMids.controls[item])
-                .addEventListener('click', 
-                () => eval(`this.on${item.capitalize()}()`))
+        if (Array.isArray(config.DOMids.controls)) 
+            config.DOMids.controls.forEach(item => {
+                document.getElementById(item.id)
+                .addEventListener('click', () => eval(`this.on${item.id.capitalize()}()`))
+            })
     }
+
 
     sessionInit = async () => {
         let sessionId = localStorage.getItem('sessionId')
@@ -45,8 +47,10 @@ export class GameUI {
         this.setDisplayState(await this.http.getSessionData())
     }
 
+
     onBetUp = async () => this.bet.set(await this.http.betUp())
     
+
     onBetDown = async () => this.bet.set(await this.http.betDown())
     
 
@@ -75,7 +79,7 @@ export class GameUI {
 
 
     onSpin = async () => {
-        if (!this.board.isRolling) {
+        if (this.board.spinFlag) {
             this.audio.play()
             try {
                 this.board.start()
@@ -92,12 +96,15 @@ export class GameUI {
                 console.log(error)
                 this.board.stop()
             }
-            
         }
     }
 
+
     onAudio = () => {
-        this.audio.play()
+        console.log('on audio')
+        this.board.onAudio()
+        // this.board.highLight()
+        // this.audio.click(300)
     }
     
 }

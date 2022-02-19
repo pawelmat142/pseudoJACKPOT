@@ -9,18 +9,61 @@
 
 #game-board .column {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
 }
 
-#game-board .column img {
+#game-board .column .item-wrapper {
     width: 100%;
     padding: 12% 20%;
     height: 33%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     object-fit: contain;
+    position: relative;
+    top: -32%;
 }
+
+#game-board .column .item-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 50%;
+    transition: .15s ease;
+    /* border: 3px solid transparent; */
+    border: 5px;
+    border-style: solid;
+    border-color: transparent;
+    border-color: transparent;
+}
+
+
+:root {
+    --high-light-time: .35s;
+}
+
+#game-board .column .item-wrapper.high-light img {
+    animation: high-light var(--high-light-time) ease-in-out forwards; 
+}
+
+/* HIGHLIGHT */
+@keyframes high-light {
+    0% {
+        border-color: transparent;
+        transform: scale(1);
+    }
+    30% {
+        border-color: red;
+        transform: scale(1.6);
+    }
+    70% {
+        border-color: red;
+        transform: scale(1.6);
+    }
+    100% {
+        border-color: re;
+        transform: scale(1);
+    }
+}
+
 
 @media (max-width: 1200px) {
     #game-board {
@@ -30,13 +73,14 @@
 
 }
 
+
 @media (max-width: 768px) {
     #game-board {
         width: 80vw;
         height: calc(80vw/1.618);
     }
 
-    #game-board .column img {
+    #game-board .column .item-wrapper {
         padding: 8% 12%;
     }
 
@@ -48,7 +92,7 @@
         height: calc(95vw/1.618);
     }
 
-    #game-board .column img {
+    #game-board .column .item-wrapper {
         padding: 6% 9%;
     }
 }

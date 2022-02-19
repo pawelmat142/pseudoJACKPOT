@@ -13,6 +13,7 @@ class ScoreGenerator {
     
     constructor() {
         this.chance = 40 //has to be integer between 1 to 100
+        this.chance = 80 //has to be integer between 1 to 100
         this.maxScore = 100 
         this.divider = 100
 

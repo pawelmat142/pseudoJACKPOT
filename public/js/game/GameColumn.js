@@ -3,12 +3,12 @@ import config from '../../gameConfig.json' assert { type: "json" }
 
 export class GameColumn {
 
-    constructor(state, board, index, factory, itemsImagesArr) {
+    constructor(state, board, index, factory, rollingStoppedTrigger) {
         
         this.board = board
         this.index = index
         this.factory = factory
-        this.itemsImagesArr = itemsImagesArr
+        this.rollingStoppedTrigger = rollingStoppedTrigger
         this.state = appendRandomItem(state, this.factory)  // np: ['A', 'S', 'W']
         
         this.rows = config.board.rows
@@ -17,19 +17,33 @@ export class GameColumn {
         this.maxInterval = config.rollConfig.maxInterval
         this.stopInterval = config.rollConfig.stopInterval
         this.step = config.rollConfig.step
+        this.highLightTime = config.rollConfig.highLightTime    //should be same as css:root{--high-light-time}
 
         this.isRolling = false
         this.stopTrigger = false
 
-        this.column = generateColumn(this.state, itemsImagesArr)
-        this.board.appendChild(this.column)
+        this.columnInit()
+    }
 
+    get column() {
+        return document.getElementById(config.DOMids.board)
+            .querySelectorAll('.column')[this.index]
+    }
+
+
+    columnInit = async () => {
+        this.itemsImages = await loadImages()
+        this.state.forEach((item, i) => {
+            document.getElementById(`r${i}-c${this.index}`)
+                .appendChild(getImgElement(item, this.itemsImages))
+        
+        })
     }
 
 
     setNewState = (state) => this.state = state
 
-        
+    
     startRoll() {
 
         let column = this.column
@@ -75,7 +89,6 @@ export class GameColumn {
         }
         
         setTimeout(frame, interval)
-
     }
 
 
@@ -90,17 +103,17 @@ export class GameColumn {
         const colNewState = this.state
 
         const frame = () => {
-            if (offset >= (100/this.rows)) {
+            if (offset >= (100/this.rows-2)) {
                 if (stopFlag) {
                     this.isRolling = false
                     this.stopTrigger = false
+                    this.rollingStoppedTrigger(this.index)
                     return 0
                 }
                 if (colNewState.length) this.rollTriggerStop(colNewState.pop())
                 offset = 0
             }
-            if (interval >= this.stopInterval) 
-            stopFlag = true
+            if (interval >= this.stopInterval) stopFlag = true
             interval += delta
             offset += this.step
             column.style.transform = `translateY(${offset}%)`
@@ -112,16 +125,43 @@ export class GameColumn {
 
 
     rollTrigger = () => {
-        const el = generateImgElement(this.factory.getRandomItem(), this.itemsImagesArr)
-        this.column.insertBefore(el, this.column.querySelector('img'))
-        this.column.removeChild(this.column.lastChild)
+        const column = this.column
+        const img = this.itemsImages[getImgIndex(this.factory.getRandomItem())].cloneNode(true)
+        const el = document.createElement('div')
+        el.classList.add('item-wrapper')
+        el.appendChild(img)
+        column.removeChild(column.lastChild)
+        column.insertBefore(el, column.querySelector('.item-wrapper'))
     }
     
     
     rollTriggerStop = (itemToAdd) => {
-        const el = generateImgElement(itemToAdd, this.itemsImagesArr)
-        this.column.insertBefore(el, this.column.querySelector('img'))
-        this.column.removeChild(this.column.lastChild)
+        const column = this.column
+        const img = this.itemsImages[getImgIndex(itemToAdd)].cloneNode(true)
+        const el = document.createElement('div')
+        el.classList.add('item-wrapper')
+        el.appendChild(img)
+        column.removeChild(column.lastChild)
+        column.insertBefore(el, column.querySelector('.item-wrapper'))
+    }
+
+
+    columnStoppedTrigger = () => {
+        console.log(this.board)
+        this.board.ccc(this.index)
+    }
+
+
+    highLight = (indexes) => {
+        if (Array.isArray(indexes)) {
+            const elements = this.column.querySelectorAll('.item-wrapper')
+            indexes.forEach(i => {
+                elements[i].classList.add('high-light')
+                setTimeout(() => elements[i].classList.remove('high-light'), this.highLightTime)
+            })
+        }
+
+
     }
 }
 
@@ -133,23 +173,9 @@ const appendRandomItem = (state, factory) => {
 }
 
 
-
-const generateColumn = (state, itemsImagesArr) => {
-    const column = document.createElement('div')
-    column.classList.add('column')
-    state.forEach(item => {
-        let itemImage = generateImgElement(item, itemsImagesArr)
-        column.appendChild(itemImage)
-    })
-    return column
-}
-
-
-
-const generateImgElement = (item, itemsImagesArr) => {
-    let itemImage = itemsImagesArr[getImgIndex(item)].cloneNode(true)
-    return itemImage
-}
+const getImgElement = (item, itemsImages) => 
+    itemsImages[getImgIndex(item)]
+    .cloneNode(true)
 
 
 
@@ -160,5 +186,19 @@ const getImgIndex = (name) => {
     })
     return result
 }
+
+
+async function loadImages() {
+    const items = config.availableItems
+    let promises = items.map(item => {
+        return new Promise((resolve, reject) => {
+        const img = new Image()
+        img.src = item.src
+        img.onload = () => resolve(img)
+        })
+    })
+    return Promise.all(promises)
+}
+
 
 

@@ -12,14 +12,33 @@
     "bet": "bet",
     "win": "win",
 
-    "controls": {
-      "betUp": "bet-up",
-      "betDown": "bet-down",
-      "transfer": "transfer",
-      "reset": "reset",
-      "spin": "spin",
-      "audio": "audio"
-    }
+    "controls" : [
+      {
+        "id": "betUp",
+        "name": "BET UP"
+      },
+      {
+        "id": "betDown",
+        "name": "BET DOWN"
+      },
+      {
+        "id": "transfer",
+        "name": "TRANSFER"
+      },
+      {
+        "id": "reset",
+        "name": "RESET"
+      },
+      {
+        "id": "spin",
+        "name": "SPIN"
+      },
+      {
+        "id": "audio",
+        "name": "audio"
+      }
+    ]
+
   },
 
   
@@ -32,7 +51,10 @@
     "stopDelay": 200,     
     "startDelay": 50,     
 
-    "spinTime": 500       
+    "spinTime": 100,   
+    
+    "highLightTime": 300,
+    "highLightInterval": 350
   },
   
 
