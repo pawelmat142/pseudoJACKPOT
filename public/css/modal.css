@@ -37,7 +37,7 @@
 }
 
 #modal-bg > div {
-    background: #8a0995bd;
+    background: #a4a4a4c9;
     padding: 30px 50px;
     border-radius: 15px;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -66,16 +66,50 @@
 
 #modal-bg > div > * { margin-bottom: 15px;}
 
-#modal-bg .close-button {
+#modal-bg button {
     padding: 5px 30px;
     border-radius: 7px;
-    border: 2px solid #2ba5b8;
-    transition: .2s ease;
     font-size: 20px;
     line-height: 25px;
-    background: #2ba5b8;
+    cursor: pointer;
+    text-align: center;
+    transition: .2s ease;
+    border: 2px solid #003e85bf;
+    background: #003e85bf;
     color: #fff; 
+}
+
+
+#modal-bg .close-button {
+    border: 2px solid #850000bf;
+    background: #850000bf;
+}
+
+
+#modal-bg button:hover { background: transparent }
+
+
+/* content */
+#modal-bg #modal > * {margin-bottom: 15px;}
+
+
+#modal-bg #modal h3 {
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+
+#modal-bg #modal input {
+    width: 100%;
+    padding: 5px 30px;
+    border-radius: 7px;
+    border: 2px solid #003e85bf;
+    font-size: 20px;
+    line-height: 25px;
+    background: #f6faffbf;
     cursor: pointer;
 }
 
-#modal-bg .close-button:hover { background: transparent }
+

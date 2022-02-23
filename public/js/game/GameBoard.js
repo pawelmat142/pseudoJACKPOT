@@ -4,7 +4,7 @@ import { GameColumn } from "./GameColumn.js"
 
 export class GameBoard {
 
-    constructor(stateFactory) {
+    constructor(stateFactory, audioManager) {
 
         this.board = document.getElementById(config.DOMids.board)
         this.rows = config.board.rows
@@ -12,56 +12,37 @@ export class GameBoard {
 
         this.factory = stateFactory
         this.currentState = this.factory.getRandomBoard()
+        this.audio = audioManager
+        this.spiningSound = null
 
-        this.initBoard()
+        this.columns = this.currentState.map((columnState, colIndex) => 
+            new GameColumn(columnState, this.board, colIndex, this.factory, this.audio)
+        )
 
         this.spinFlag = true
-
     }
 
 
-    
-    initBoard = async () => {
-        this.columns = []
-        for(let i = 0; i < this.cols; i++) {
-            const columnState = getCurrentColumnState(this.currentState, i)
-            const newColumn = new GameColumn(columnState, this.board, i, this.factory, this.colStopTrigger)
-            this.columns.push(newColumn)
-        }
-    }
-
-
-
-    setNewState = (state) => {
-        this.currentState = state
-        this.columns.forEach((col, ind) => 
-            col.setNewState(getCurrentColumnState(state, ind)))
-    }
-    
-
-
-    start = () => {
-        if (!this.spinFlag) {
-            console.log('is rolling: ' + this.isRolling)
-        }
-        else {
+    spin = async () => {
+        if (this.spinFlag) {
             this.spinFlag = false
-            this.columns.forEach((col, index) => {
-                setTimeout(() => col.startRoll(), startInterval(index) )
-            })
-        }
+            this.audio.spin.play()
+            this.audio.spinning.play()
+            let promises = this.columns.map(col => col.spin())
+            return Promise.all(promises)
+        } else console.log('is rolling: ' + this.isRolling)
     }
+
+
+    stopSpin = () => this.columns.forEach((column, i) => {
+        if (!this.spinFlag) setTimeout(() => column.stopFlag = true, config.rollConfig.stopDelay*i) 
+        else console.log('is rolling: ' + this.isRolling)
+    })
     
-    
-    stop = () => {
-        if (!this.spinFlag) {
-            this.columns.forEach((col, index) => {
-                setTimeout(() => col.stopTrigger = true, stopInterval(index) )
-            })
-        }
-        else {
-            console.log('is rolling: ' + this.isRolling)
-        }
+
+    setCurrentState = (state) => {
+        this.currentState = state
+        this.columns.forEach((col, i) => col.setState(this.currentState[i]))
     }
 
 
@@ -74,83 +55,53 @@ export class GameBoard {
     }
 
 
-
-    colStopTrigger = async (colIndex) => {
-
-        if (colIndex >= this.cols-1) {
-            const scoreLines = await this.highLightScoreLines()
-            if (scoreLines.length > 2) {
-                await this.highLightScoreLinesAll(scoreLines)
-            }
-            if (!!scoreLines.length) setTimeout(() => this.highLightsStopTrigger(), config.rollConfig.highLightTime)
-            else this.highLightsStopTrigger()
-        }
-    }
-    
-    highLightsStopTrigger = () => {
-        this.spinFlag = true;
-        console.log('stop')
-    }
-    
-
-    highLightScoreLines = () => {
+    highlightScore = async () => {
         const scoreLines = getScoreLines(this.currentState)
-        let highLightsCounter = 0
-        let promises = scoreLines.map((line, i) => {
-            return new Promise((resolve, reject) => {
-                highLightsCounter++
-                if (Array.from(line).shift() === 'r') {
-                    setTimeout(() => {
-                        const index = parseInt(Array.from(line).pop())
-                        this.columns.forEach(col => col.highLight([index]))
-                        resolve(line)
-                    },i*config.rollConfig.highLightInterval)
-                }
-                if (Array.from(line).shift() === 'x') {
-                    setTimeout(() => {
-                        const index = parseInt(Array.from(line).pop())
-                        this.columns.forEach((col, ind) => col.highLight([Math.abs(index - ind)]))
-                        resolve(line)
-                    },i*config.rollConfig.highLightInterval)
-                }
+        await sleep(config.rollConfig.highLightInterval*0.3)
+        await this.highlightLines(scoreLines)
+        await sleep(config.rollConfig.highLightInterval*0.15)
+        if (scoreLines.length > 2) await this.highlightLinesTogether(scoreLines, 0)
+        if (scoreLines.length > 4) await this.highlightLinesTogether(scoreLines, 1)
+        await sleep(config.rollConfig.highLightInterval*0.3)
+    }
+
+
+
+    highlightLines = async (lines) => {
+        let promises = lines.map((line, i) => {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    this.audio.highlights.play()
+                    this.highlightLine(line)
+                    resolve()
+                }, config.rollConfig.highLightInterval*i)
             })
         })
         return Promise.all(promises)
     }
 
 
-    highLightScoreLinesAll = (scoreLines) => {
-        return new Promise((resolve, reject) => {
-            let highLightCols = this.columns.map(i => [])
-            scoreLines.forEach(line => {
-                if (Array.from(line).shift() === 'r') {
-                    const rowIndex = parseInt(Array.from(line).pop())
-                    highLightCols.forEach(col => col.push(rowIndex))
-                }
-                if (Array.from(line).shift() === 'x') {
-                    const i = parseInt(Array.from(line).pop())
-                    highLightCols.forEach((col, colIndex) => {
-                        const rowIndex = Math.abs(i - colIndex)
-                        if (col.indexOf(rowIndex) === -1) col.push(rowIndex)
-                    })
-                }
-            })
-            setTimeout(() => {
-                this.columns.forEach((col, ind) => {
-                    col.highLight(highLightCols[ind])
-                    setTimeout(() => resolve(), config.rollConfig.highLightTime)
-                })
-            },config.rollConfig.highLightTime*1.5)
-        })
+
+    highlightLine = (line) => {
+        if (Array.from(line).shift() === 'r') {
+            const rowIndex = parseInt(Array.from(line).pop())
+            this.columns.forEach(col => col.highLight([rowIndex]))
+            return rowIndex
+        }
+        if (Array.from(line).shift() === 'x') {
+            const index = parseInt(Array.from(line).pop())
+            this.columns.forEach((col, ind) => col.highLight([Math.abs(index - ind)]))
+            return index
+        }
     }
 
 
-    onAudio = () => {
-        // this.columns.forEach(col => col.highLight([1,2,3]))
-        this.columns.forEach(col => col.highLight([0]))
+    highlightLinesTogether = async (lines) => {
+        await sleep(config.rollConfig.highLightInterval)
+        this.audio.highlights.play()
+        this.audio.highlightAll.play()
+        lines.forEach(line => this.highlightLine(line))
     }
-            
-            
 
 }
 
@@ -164,13 +115,15 @@ const getScoreLines = (state) => {
 
 const getHorizontalLines = (board) => {
     let result = []
-    for (let row = 0; row < board.length; row++) 
-        for (let col = 0; col < board[row].length; col++) 
+    for (let colIndex = 0; colIndex < board.length; colIndex++) 
+        if (colIndex > 1) 
+            for (let rowIndex = 0; rowIndex < board[colIndex].length; rowIndex++) {
 
-            if (col > 1 ) {
-                if ((board[row][col] === board[row][col-1]) &&
-                    (board[row][col] === board[row][col-2]) ) 
-                    result.push(`r${row}`)
+                if (board[colIndex][rowIndex] === board[colIndex-1][rowIndex] && 
+                    board[colIndex][rowIndex] === board[colIndex-2][rowIndex]) 
+                    
+                    result.push('r'+rowIndex)
+
             }
     return result
 }
@@ -178,33 +131,19 @@ const getHorizontalLines = (board) => {
 
 const getObliqueLines = (board) => {
     let result = []
-    for (let row = 0; row < board.length; row++) 
-        for (let col = 0; col < board[row].length; col++) 
+    for (let colIndex = 0; colIndex < board.length; colIndex++) 
+        if (colIndex > 1) 
+            for (let rowIndex = 0; rowIndex < board[colIndex].length; rowIndex++) {
 
-            if (col > 1 && row > 1) {
-                if ((board[row][col] === board[row-1][col-1]) &&
-                    (board[row][col] === board[row-2][col-2]) ) 
-                    result.push(`x${row-2}`)
-                    
-                if (board[row][col-2] === board[row-1][col-1] && 
-                    board[row][col-2] === board[row-2][col]) 
-                    result.push(`x${row}`)
+                if ( !(rowIndex % 2) &&
+                    board[colIndex][rowIndex] === board[colIndex-1][Math.abs(rowIndex-1)] && 
+                    board[colIndex][rowIndex] === board[colIndex-2][Math.abs(rowIndex-2)] )
+
+                    result.push('x'+Math.abs(rowIndex-2))
             }
+
     return result
 }
 
 
-const startInterval = (index) => { return config.rollConfig.startDelay*index}
-
-const stopInterval = (index) => { return config.rollConfig.stopDelay*index}
-    
-        
-const getCurrentColumnState = (currentState, index) => {
-    const columnState = []
-    currentState.forEach(row => columnState.push(row[index]))
-    return columnState
-}
-
-
-
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve(), ms));
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))

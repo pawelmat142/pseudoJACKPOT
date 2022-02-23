@@ -1,3 +1,4 @@
+const e = require('connect-flash')
 const config = require('../public/gameConfig.json')
 const scores = require("./scores")
 
@@ -56,7 +57,6 @@ class ScoreGenerator {
             flag = hasBoardObliqueLine(board) || hasBoardHorizontalLine(board)
         }
         return board
-        // board.forEach(row => console.log(row))
     }
 
 
@@ -101,24 +101,22 @@ const getRandomBoard = () => {
 
 const getBoardByConfig = (scoreCongifg) => {
     const itemsNotInConfig = getItemsNotInConfig(scoreCongifg)
-    const newConfig = []
-
-    scoreCongifg.forEach(row => {
-        const newRow = []
-        row.forEach((item, colInd) => {
+    let board = []
+    scoreCongifg.forEach((col, colIndex) => {
+        let boardCol = []
+        col.forEach((item, rowIndex) => {
             if (item === '0') {
                 let newItem = itemsNotInConfig[getRandomInt(0, itemsNotInConfig.length-1)]
-                // prevent generate line with same items
-                while (newItem === newRow[colInd-1] && colInd > 0) 
+                while (colIndex>0 && newItem === board[colIndex-1][rowIndex]) {
                     newItem = itemsNotInConfig[getRandomInt(0, itemsNotInConfig.length-1)]
-                
-                newRow.push(newItem)
+                }
+                boardCol.push(newItem)
             }
-            else newRow.push(item)
+            else boardCol.push(item)
         })
-        newConfig.push(newRow)
+        board.push(boardCol)
     })
-    return newConfig
+    return board
 }
 
 

@@ -13,6 +13,8 @@ router.get('/session/stop/:sessionId', gameController.stopSession)
 router.get('/betup/:sessionId', gameController.betUp)
 router.get('/betdown/:sessionId', gameController.betDown)
 
+router.post('/transfer/:sessionId', gameController.transfer)
+
 router.get('/spin/:sessionId', gameController.spin)
 
 router.get('/testing', gameController.testing)

@@ -25,7 +25,12 @@
 #game-ui .display > div p { 
     font-size: 45px;
     color: #ed143d;
+    transition: .2s ease-in-out;
 }
+
+#game-ui .display > div p.active {
+    transform: scale(1.2);
+} 
 
 #game-ui .display > div::before {
     width: 50%;

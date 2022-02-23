@@ -14,11 +14,11 @@ export class GameUI {
         this.http = httpClient
         this.audio = audio
 
-        this.modal = new Modal()
+        this.modal = new Modal(audio, this.transferAction)
 
-        this.coins = new DisplayItem(config.DOMids.coins, 100)
-        this.bet = new DisplayItem(config.DOMids.bet, 1)
-        this.win = new DisplayItem(config.DOMids.win, 0)
+        this.coins = new DisplayItem(config.DOMids.coins, 100, this.audio)
+        this.bet = new DisplayItem(config.DOMids.bet, 1, this.audio)
+        this.win = new DisplayItem(config.DOMids.win, 0, this.audio)
 
         this.constrolsInit()
         this.sessionInit()
@@ -34,7 +34,6 @@ export class GameUI {
             })
     }
 
-
     sessionInit = async () => {
         let sessionId = localStorage.getItem('sessionId')
         if (!sessionId) {
@@ -48,20 +47,33 @@ export class GameUI {
     }
 
 
-    onBetUp = async () => this.bet.set(await this.http.betUp())
-    
+    // BUTTONS
 
-    onBetDown = async () => this.bet.set(await this.http.betDown())
+    onBetUp = async () => {
+        const newBet = await this.http.betUp()
+        if (newBet !== this.bet.get()) {
+            this.audio.betUp.play()
+            this.bet.set(newBet)
+        }
+    }
+    
+    
+    onBetDown = async () => {
+        const newBet = await this.http.betDown()
+        if (newBet !== this.bet.get()) {
+            this.audio.betDown.play()
+            this.bet.set(newBet)
+        } 
+    }
     
 
     onTransfer = async () => {
-        console.log('ontransfer')
-
         this.modal.open()
-
+        this.modal.setHeader(`Transfer WIN > COINS`)
+        this.modal.put(this.transferModalInput())
     }
 
-
+    
     onReset = async () => {
         if (await this.http.stopSession()) {
             const sessionId = await this.http.newSession()
@@ -71,42 +83,69 @@ export class GameUI {
     }
 
 
+    onSpin = async () => {
+
+        if (this.board.spinFlag) {
+            try {
+                const spinResponse = await this.http.spin()
+                this.board.setCurrentState(spinResponse.board)
+                this.coins.animateTo(spinResponse.coins, config.ui.transferTime, false)
+                console.log(spinResponse)
+    
+                setTimeout(() => this.board.stopSpin(), config.rollConfig.spinTime)
+                await this.board.spin()
+                this.audio.spinning.pause()
+                this.audio.spinning.load()
+                await this.board.highlightScore()
+                
+                if (spinResponse.win > this.win.get()) this.win.animateTo(spinResponse.win, config.ui.transferTime, true)
+                this.board.spinFlag = true
+
+            } catch (error) {
+                console.log(error)
+            }
+
+        }
+
+    }
+
+
+    transferModalInput = () => {
+        const input = document.createElement('input')
+        input.classList.add('transfer-input')
+        if (this.win.get() < 100) input.value = this.win.get()
+        else input.value = 100
+        input.type = 'number'
+        input.addEventListener('input', (event) => this.onInputTransfer(event, input))
+        return input
+    }
+
+
+    transferAction = async (e) => {
+        this.board.spinFlag = false
+        console.log(e)
+        const input = document.getElementById('modal').querySelector('input')
+        const response = await this.http.transfer({"transfer": input.value})
+        this.modal.close()
+        if (parseInt(response.win) !== this.win.get()) {
+            this.coins.animateTo(response.coins, config.ui.transferTime, true)
+            await this.win.animateTo(response.win, config.ui.transferTime, false)
+        }
+        this.board.spinFlag = true
+    }
+
+
+    onInputTransfer = (e, input) => {
+        if (input.value > this.win.get()) input.value = this.win.get()
+        if (input.value < 0) input.value = 0
+    }
+
+
     setDisplayState = (state) => {
         this.coins.set(state.coins)
         this.bet.set(state.bet)
         this.win.set(state.win)
     }
-
-
-    onSpin = async () => {
-        if (this.board.spinFlag) {
-            this.audio.play()
-            try {
-                this.board.start()
-                const response = await this.http.spin()
-                console.log(response)
-                this.board.setNewState(response.board)
-                this.coins.set(response.coins)
-                setTimeout(() => {
-                    this.board.stop()
-                    this.win.set(response.win)
-                }, config.rollConfig.spinTime)
-            }
-            catch (error) {
-                console.log(error)
-                this.board.stop()
-            }
-        }
-    }
-
-
-    onAudio = () => {
-        console.log('on audio')
-        this.board.onAudio()
-        // this.board.highLight()
-        // this.audio.click(300)
-    }
-    
 }
 
 const localStorageSetSessions = () => {
@@ -126,4 +165,10 @@ const localStorageSetSessions = () => {
     else localStorage.setItem('sessions', sessionId)
     return localStorage.getItem('sessions').split(',')
 }
+
+
+
+
+
+
 

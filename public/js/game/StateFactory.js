@@ -43,16 +43,3 @@ const getRandomInt = (min, max) => {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
-
-async function loadImages() {
-    const items = config.availableItems
-    let promises = items.map(item => {
-        return new Promise((resolve, reject) => {
-        const img = new Image()
-        img.src = item.src
-        img.onload = () => resolve(img)
-        })
-    })
-    return Promise.all(promises)
-}

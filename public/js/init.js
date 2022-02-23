@@ -6,17 +6,20 @@ import { AudioManager } from './AudioManager.js'
 
 
 
-
 const httpClient = new HttpClient() 
 
-const audio = new AudioManager()
+
+const audioManager = new AudioManager()
+
 
 // client side random items generator
 const stateFactory = new StateFactory()
 
+
 // DOM operations - rolling board
-const gameBoard = new GameBoard(stateFactory)
+const gameBoard = new GameBoard(stateFactory, audioManager)
+
 
 // getting scores from server side and
 // DOM operations - User Interface
-new GameUI(gameBoard, httpClient, audio)
+new GameUI(gameBoard, httpClient, audioManager)

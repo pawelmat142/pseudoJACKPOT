@@ -32,10 +32,6 @@
       {
         "id": "spin",
         "name": "SPIN"
-      },
-      {
-        "id": "audio",
-        "name": "audio"
       }
     ]
 
@@ -51,10 +47,14 @@
     "stopDelay": 200,     
     "startDelay": 50,     
 
-    "spinTime": 100,   
+    "spinTime": 500,   
     
-    "highLightTime": 300,
-    "highLightInterval": 350
+    "highLightTime": 280,
+    "highLightInterval": 300
+  },
+
+  "ui": {
+    "transferTime": 500
   },
   
 

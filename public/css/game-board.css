@@ -37,12 +37,14 @@
 
 
 :root {
-    --high-light-time: .35s;
+    --high-light-time: .3s;
 }
+
 
 #game-board .column .item-wrapper.high-light img {
     animation: high-light var(--high-light-time) ease-in-out forwards; 
 }
+
 
 /* HIGHLIGHT */
 @keyframes high-light {
@@ -50,11 +52,11 @@
         border-color: transparent;
         transform: scale(1);
     }
-    30% {
+    20% {
         border-color: red;
         transform: scale(1.6);
     }
-    70% {
+    40% {
         border-color: red;
         transform: scale(1.6);
     }

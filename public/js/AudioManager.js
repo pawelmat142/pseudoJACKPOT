@@ -1,38 +1,52 @@
+
 export class AudioManager {
     
     constructor () {
-        console.log('audio manager init')
 
-        this.path = ('./audio/')
+        this.spinning = new Audio(`./audio/smp7.mp3`)
 
-        this.smp1 = new Audio(`${this.path}sample-1.mp3`)
+        this.spin = new Audio(`./audio/smp8.mp3`)
+        this.spin.volume = 0.6
+
+        this.moneyTransfer = new Audio(`./audio/moneyTransfer.mp3`)
+
+        this.money = new Audio(`./audio/money.mp3`)
+        this.money.volume = 0.6
+
+        this.highlights = new AudioArray('smp3')
+
+        this.highlightAll = new AudioArray('smp9')
+
+        this.betUp = new AudioArray('betup')
+        this.betUp.volume = 0.6
+        
+        this.betDown = new AudioArray('betdown')
+        this.betDown.volume = 0.4
+
+        this.colsStop = new AudioArray('smp10')
+
+        this.openModal = new Audio(`./audio/smp11.mp3`)
+        this.openModal.volume = 0.6
+        this.closeModal = new Audio(`./audio/smp1.mp3`)
+        this.closeModal.volume = 0.6
 
     }
-
-    play = () => {
-        start(this.smp1)
-    }
-
-    click = (duration) => {
-        this.smp1.play()
-        setTimeout(() => {
-            this.smp1.pause()
-            this.smp1.load()
-        }, duration)
-    }
-
     
 }
 
+class AudioArray {
 
-const start = (track) => {
-    track.play()
-    stop(track)
-}
+    constructor(filename) {
+        this.path = `./audio/${filename}.mp3`
+        this.arr5 = [1,2,3,4,5]
+        this.array = this.arr5.map(x => new Audio(this.path))
+        this.counter = 0
+    }
 
-const stop = (input) => {
-    setTimeout(() => {
-        input.pause()
-        input.load()
-    },500)
+    play = () => {
+        this.array[this.counter].play()
+        this.counter++
+        if (this.counter > 4) this.counter = 0
+    }
+
 }

@@ -71,11 +71,34 @@ exports.betDown = async (req, res, next) => {
                 const result = await updateBetBySessionId(sessionId, bet - 1)
                 if (result) res.json(bet - 1)
                 else throw new Error('db response error')
-            }
-        }
-        else throw new Error('db response error')
-    }
-    catch (error) { next(error) }
+            } else res.json(bet)
+        } else throw new Error('db response error')
+    } catch (error) { next(error) }
+}
+
+
+// TRANSFER
+
+exports.transfer = async (req, res, next) => {
+    console.log('server - transfer')
+    try {
+        const transfer = parseInt(req.body.transfer)
+        const sessionId = req.params.sessionId
+        const sessionData = await getSessionById(sessionId)
+        if (sessionData) {
+            if (transfer <= sessionData.win) {
+                let win = await updateWinBySessionId(sessionId, sessionData.win - transfer) 
+                let coins = await updateCoinsBySessionId(sessionId, sessionData.coins + transfer)
+                if (win && coins || parseInt(win) === 0) {
+                    res.json({
+                        coins: coins,
+                        bet: sessionData.bet,
+                        win: win
+                    })
+                } else throw new Error('db response error')
+            } else throw new Error('not enough win')
+        } else throw new Error('db response error')
+    } catch (error) { next(error) }
 }
 
 
@@ -93,8 +116,13 @@ exports.spin = async (req, res, next) => {
             if (spin) {
                 const coins = await updateCoinsBySessionId(sessionId, parseInt(sessionData.coins - bet))
                 const win = await updateWinBySessionId(sessionId, parseInt(sessionData.win + parseInt(spin.score) * bet))
-                if (coins && win) {
+                if (coins && win || parseInt(win) === 0 || parseInt(coins) === 0) {
                     res.json({
+                        // board : [
+                        //     ['W','W','W'],
+                        //     ['W','W','W'],
+                        //     ['W','W','W']
+                        // ],
                         board: board,
                         coins: coins,
                         bet: bet,
@@ -102,14 +130,10 @@ exports.spin = async (req, res, next) => {
                     })
                     console.log(`session: ${sessionId}, score: ${score}, bet: ${bet} `)
                     console.log(board)
-                }
-                else throw new Error('db response error')
-            }
-            else throw new Error('db response error')
-        }
-        else throw new Error('db response error')
-    }
-    catch (error) { next(error) }
+                } else throw new Error('db response error')
+            } else throw new Error('db response error')
+        } else throw new Error('db response error')
+    } catch (error) { next(error) }
 }
 
 

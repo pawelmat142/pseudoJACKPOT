@@ -37,6 +37,13 @@ export class HttpClient {
     }
 
 
+    // TRANSFER
+
+    transfer = async (data) => {
+        return await post(`${this.url}transfer/${this.sessionId}`, data)
+    }
+
+
     // SPIN
 
     spin = async () => {
@@ -96,7 +103,7 @@ const get = async (url) => {
 const post = async (url, data) => {
     try {
         let response = await fetch(url, { 
-            method: 'POST',
+            method: "POST",
             headers: {"Content-type": "application/json"},
             body: JSON.stringify(data)
         })

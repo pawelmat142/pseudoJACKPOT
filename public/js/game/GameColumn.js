@@ -3,14 +3,14 @@ import config from '../../gameConfig.json' assert { type: "json" }
 
 export class GameColumn {
 
-    constructor(state, board, index, factory, rollingStoppedTrigger) {
+    constructor(state, board, index, factory, audioManager) {
         
         this.board = board
         this.index = index
         this.factory = factory
-        this.rollingStoppedTrigger = rollingStoppedTrigger
+        this.audio = audioManager
         this.state = appendRandomItem(state, this.factory)  // np: ['A', 'S', 'W']
-        
+
         this.rows = config.board.rows
         this.cols = config.board.cols
         this.minInterval = config.rollConfig.minInterval
@@ -20,10 +20,11 @@ export class GameColumn {
         this.highLightTime = config.rollConfig.highLightTime    //should be same as css:root{--high-light-time}
 
         this.isRolling = false
-        this.stopTrigger = false
+        this.stopFlag = false
 
         this.columnInit()
     }
+
 
     get column() {
         return document.getElementById(config.DOMids.board)
@@ -33,93 +34,110 @@ export class GameColumn {
 
     columnInit = async () => {
         this.itemsImages = await loadImages()
-        this.state.forEach((item, i) => {
-            document.getElementById(`r${i}-c${this.index}`)
-                .appendChild(getImgElement(item, this.itemsImages))
-        
+        this.state.forEach((item, i) => 
+            this.column.querySelectorAll('.item-wrapper')[i]
+            .appendChild(getImgElement(item, this.itemsImages)))
+    }
+
+
+    setState = (state) => this.state = [...state]
+
+
+
+    spin = async () => {
+        this.stopFlag = false
+        const start =  await this.startRoll()
+        const constStart = await this.constRoll(start)
+        await this.stopRoll(constStart)
+        return 'a'
+    }
+
+
+    spinStop = () => {
+        this.stopFlag = true
+    }
+    
+
+    startRoll() {
+        return new Promise(resolve => {
+            let column = this.column
+            let offset = 0
+            let interval = this.maxInterval
+            const delta = (this.maxInterval - this.minInterval) / 100 * this.step
+    
+            this.isRolling = true
+    
+            const frame = () => {
+                if (offset >= (100/this.rows)) {
+                    this.rollTrigger()
+                    offset = 0
+                }
+                if (interval <= this.minInterval)
+                    resolve({"interval": interval, "offset": offset})
+                    // this.constRoll(interval, offset)
+                else setTimeout(frame, interval)
+                column.style.transform = `translateY(${offset}%)`
+                interval -= delta
+                offset += this.step
+            }
+            setTimeout(frame, interval)
         })
     }
 
 
-    setNewState = (state) => this.state = state
-
+    constRoll(start) {
+        return new Promise( resolve => {
+            let column = this.column
+            let interval = start.interval
+            let offset = start.offset
     
-    startRoll() {
-
-        let column = this.column
-        let offset = 0
-        let interval = this.maxInterval
-        const delta = (this.maxInterval - this.minInterval) / 100 * this.step
-
-        this.isRolling = true
-
-        const frame = () => {
-            if (offset >= (100/this.rows)) {
-                this.rollTrigger()
-                offset = 0
-            }
-            if (interval <= this.minInterval) 
-                this.constRoll(interval, offset)
-            else setTimeout(frame, interval)
-            column.style.transform = `translateY(${offset}%)`
-            interval -= delta
-            offset += this.step
-        }
-        
-        setTimeout(frame, interval)
-    }
-
-
-    constRoll(_interval, _offset) {
-
-        let column = this.column
-        let interval = _interval
-        let offset = _offset
-
-        const frame = () => {
-            if (offset >= (100/this.rows)) {
-                this.rollTrigger()
-                offset = 0
-            }
-            if (this.stopTrigger) 
-                this.stopRoll(offset, interval)
-            else setTimeout(frame, interval)
-            column.style.transform = `translateY(${offset}%)`
-            offset += this.step
-        }
-        
-        setTimeout(frame, interval)
-    }
-
-
-    stopRoll (_offset, _interval) {
-        
-        let column = this.column
-        let offset = _offset
-        let interval = _interval
-        const delta = (this.maxInterval - interval) / 100 * this.step
-        let stopFlag = false
-
-        const colNewState = this.state
-
-        const frame = () => {
-            if (offset >= (100/this.rows-2)) {
-                if (stopFlag) {
-                    this.isRolling = false
-                    this.stopTrigger = false
-                    this.rollingStoppedTrigger(this.index)
-                    return 0
+            const frame = () => {
+                if (offset >= (100/this.rows)) {
+                    this.rollTrigger()
+                    offset = 0
                 }
-                if (colNewState.length) this.rollTriggerStop(colNewState.pop())
-                offset = 0
+                if (this.stopFlag) 
+                    resolve({"interval": interval, "offset": offset})
+                    // this.stopRoll(offset, interval)
+                else setTimeout(frame, interval)
+                column.style.transform = `translateY(${offset}%)`
+                offset += this.step
             }
-            if (interval >= this.stopInterval) stopFlag = true
-            interval += delta
-            offset += this.step
-            column.style.transform = `translateY(${offset}%)`
             setTimeout(frame, interval)
-        }
-        setTimeout(frame, interval)
+        })
+    }
+
+
+    stopRoll (start) {
+        return new Promise( resolve => {
+            let interval = start.interval
+            let offset = start.offset
+            let column = this.column
+            const delta = (this.maxInterval - interval) / 100 * this.step
+            let stopFlag = false
+    
+            const colNewState = this.state
+    
+            const frame = () => {
+                if (offset >= (100/this.rows-2)) {
+                    if (stopFlag) {
+                        this.isRolling = false
+                        this.stopFlag = false
+                        this.audio.colsStop.play()
+                        resolve()
+                        return 0
+                    }
+                    if (colNewState.length) this.rollTriggerStop(colNewState.pop())
+                    offset = 0
+                }
+                if (interval >= this.stopInterval) stopFlag = true
+                interval += delta
+                offset += this.step
+                column.style.transform = `translateY(${offset}%)`
+                setTimeout(frame, interval)
+            }
+            setTimeout(frame, interval)
+        })
     }
 
 
@@ -146,12 +164,6 @@ export class GameColumn {
     }
 
 
-    columnStoppedTrigger = () => {
-        console.log(this.board)
-        this.board.ccc(this.index)
-    }
-
-
     highLight = (indexes) => {
         if (Array.isArray(indexes)) {
             const elements = this.column.querySelectorAll('.item-wrapper')
@@ -160,11 +172,10 @@ export class GameColumn {
                 setTimeout(() => elements[i].classList.remove('high-light'), this.highLightTime)
             })
         }
-
-
     }
-}
 
+
+}
 
 
 const appendRandomItem = (state, factory) => {
@@ -174,9 +185,7 @@ const appendRandomItem = (state, factory) => {
 
 
 const getImgElement = (item, itemsImages) => 
-    itemsImages[getImgIndex(item)]
-    .cloneNode(true)
-
+    itemsImages[getImgIndex(item)].cloneNode(true)
 
 
 const getImgIndex = (name) => {
@@ -192,9 +201,9 @@ async function loadImages() {
     const items = config.availableItems
     let promises = items.map(item => {
         return new Promise((resolve, reject) => {
-        const img = new Image()
-        img.src = item.src
-        img.onload = () => resolve(img)
+            const img = new Image()
+            img.src = item.src
+            img.onload = () => resolve(img)
         })
     })
     return Promise.all(promises)
