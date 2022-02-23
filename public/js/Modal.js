@@ -1,14 +1,16 @@
 export class Modal {
 
     constructor (audioManager, okAction) {
-        this.audio = audioManager
+        this.okAction = okAction
+        this.ifOkButton = typeof this.okAction === 'function' ? true : false
+        this.audio = audioManager    
         this.id = 'modal-bg'
         this.window = this.generateElement()
         this.okAction = okAction
 
         setToDom(this.window, this.id)
         
-        this.content = document.querySelector('#modal-bg #modal')
+        this.content = document.getElementById('modal')
         this.keyListeners = null
     }
 
@@ -58,15 +60,10 @@ export class Modal {
         closeButton.classList.add('close-button')
         closeButton.innerHTML = "zamknij"
         closeButton.addEventListener('click', () => this.close(true))
-        closeButton.addEventListener('key', (e) => console.log(e))
-
-        const okButton = document.createElement('button')
-        okButton.innerHTML = "ok"
-        okButton.addEventListener('click', (e) => this.onOk(e))
 
         const div = document.createElement('div')
         div.appendChild(modal)
-        div.appendChild(okButton)
+        div.appendChild(this.getOkButton())
         div.appendChild(closeButton)
         
         const bg = document.createElement('div')
@@ -74,6 +71,37 @@ export class Modal {
         bg.appendChild(div)
 
         return bg
+        
+    }
+
+    isOkButton = () => {
+        const a = document.getElementById('modal')
+        console.log(a)
+    }
+
+
+    getOkButton = () => {
+        const okButton = document.createElement('button')
+        okButton.innerHTML = "ok"
+        okButton.addEventListener('click', (e) => this.onOk(e))
+        okButton.setAttribute('id', 'ok-button')
+        return okButton
+    }
+
+
+    removeOkButton = () => {
+        const b = document.getElementById('ok-button')
+        if (b) b.remove()
+    }
+
+    
+    addOkButton = () => {
+        const b = document.getElementById('ok-button')
+        if (!b) {
+            const closeButton = document.querySelector('#modal-bg > div > .close-button')
+            const okButton = this.getOkButton()
+            document.querySelector('#modal-bg > div').insertBefore(okButton, closeButton)
+        }
     }
 
 

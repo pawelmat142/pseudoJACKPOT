@@ -9,7 +9,7 @@ import { AudioManager } from './AudioManager.js'
 const httpClient = new HttpClient() 
 
 
-const audioManager = new AudioManager()
+const audioManager = new AudioManager(0.6)
 
 
 // client side random items generator

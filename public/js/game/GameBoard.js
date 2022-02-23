@@ -12,8 +12,7 @@ export class GameBoard {
 
         this.factory = stateFactory
         this.currentState = this.factory.getRandomBoard()
-        this.audio = audioManager
-        this.spiningSound = null
+        this.audio = audioManager.it
 
         this.columns = this.currentState.map((columnState, colIndex) => 
             new GameColumn(columnState, this.board, colIndex, this.factory, this.audio)
@@ -26,8 +25,6 @@ export class GameBoard {
     spin = async () => {
         if (this.spinFlag) {
             this.spinFlag = false
-            this.audio.spin.play()
-            this.audio.spinning.play()
             let promises = this.columns.map(col => col.spin())
             return Promise.all(promises)
         } else console.log('is rolling: ' + this.isRolling)

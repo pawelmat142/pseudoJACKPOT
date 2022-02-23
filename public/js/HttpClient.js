@@ -88,6 +88,7 @@ export class HttpClient {
 const get = async (url) => {
     try {
         let response = await fetch(url)
+        if (response.status === 201) return await response.status
         if (response.ok) {
             return await response.json()
         }

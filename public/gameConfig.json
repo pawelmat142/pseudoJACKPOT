@@ -31,7 +31,15 @@
       },
       {
         "id": "spin",
-        "name": "SPIN"
+        "name": "!SPIN!"
+      },
+      {
+        "id": "plus",
+        "name": "plus"
+      },
+      {
+        "id": "minus",
+        "name": "minus"
       }
     ]
 
@@ -54,7 +62,8 @@
   },
 
   "ui": {
-    "transferTime": 500
+    "transferTime": 500,
+    "volume": 0.6
   },
   
 

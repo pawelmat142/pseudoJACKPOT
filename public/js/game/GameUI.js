@@ -8,13 +8,14 @@ String.prototype.capitalize = function() {
 
 export class GameUI {
 
-    constructor(gameBoard, httpClient, audio) {
+    constructor(gameBoard, httpClient, audioManager) {
 
         this.board = gameBoard
         this.http = httpClient
-        this.audio = audio
+        this.audio = audioManager.it
+        this.audioManager = audioManager
 
-        this.modal = new Modal(audio, this.transferAction)
+        this.modal = new Modal(this.audio, this.transferAction)
 
         this.coins = new DisplayItem(config.DOMids.coins, 100, this.audio)
         this.bet = new DisplayItem(config.DOMids.bet, 1, this.audio)
@@ -70,6 +71,7 @@ export class GameUI {
     onTransfer = async () => {
         this.modal.open()
         this.modal.setHeader(`Transfer WIN > COINS`)
+        this.modal.addOkButton()
         this.modal.put(this.transferModalInput())
     }
 
@@ -87,7 +89,13 @@ export class GameUI {
 
         if (this.board.spinFlag) {
             try {
+                this.audio.spin.play()
+                this.audio.spinning.play()
                 const spinResponse = await this.http.spin()
+                if (spinResponse === 201) {
+                    this.notEnoughWin()
+                    return 0
+                }
                 this.board.setCurrentState(spinResponse.board)
                 this.coins.animateTo(spinResponse.coins, config.ui.transferTime, false)
                 console.log(spinResponse)
@@ -104,9 +112,26 @@ export class GameUI {
             } catch (error) {
                 console.log(error)
             }
-
         }
+    }
 
+
+    onPlus = () => this.audioManager.volumeUp()
+    
+    onMinus = () => this.audioManager.volumeDown()
+
+
+    notEnoughWin = () => {
+        this.audio.spin.pause()
+        this.audio.spinning.pause()
+        this.audio.spin.load()
+        this.audio.spinning.load()
+        this.audio.notEnough.play()
+        this.coins.active()
+        this.coins.deactive()
+        this.modal.open()
+        this.modal.removeOkButton()
+        this.modal.setHeader("not enought coins")
     }
 
 
@@ -123,7 +148,6 @@ export class GameUI {
 
     transferAction = async (e) => {
         this.board.spinFlag = false
-        console.log(e)
         const input = document.getElementById('modal').querySelector('input')
         const response = await this.http.transfer({"transfer": input.value})
         this.modal.close()

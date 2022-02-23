@@ -112,26 +112,29 @@ exports.spin = async (req, res, next) => {
         const sessionData = await getSessionById(sessionId)
         if (sessionData) {
             const bet = parseInt(sessionData.bet)
-            const spin = await addSpin(sessionId, score, bet)
-            if (spin) {
-                const coins = await updateCoinsBySessionId(sessionId, parseInt(sessionData.coins - bet))
-                const win = await updateWinBySessionId(sessionId, parseInt(sessionData.win + parseInt(spin.score) * bet))
-                if (coins && win || parseInt(win) === 0 || parseInt(coins) === 0) {
-                    res.json({
-                        // board : [
-                        //     ['W','W','W'],
-                        //     ['W','W','W'],
-                        //     ['W','W','W']
-                        // ],
-                        board: board,
-                        coins: coins,
-                        bet: bet,
-                        win: win
-                    })
-                    console.log(`session: ${sessionId}, score: ${score}, bet: ${bet} `)
-                    console.log(board)
+            if (sessionData.coins < sessionData.bet) res.status(201).json({board: "not enough win"})
+            else {
+                const spin = await addSpin(sessionId, score, bet)
+                if (spin) {
+                    const coins = await updateCoinsBySessionId(sessionId, parseInt(sessionData.coins - bet))
+                    const win = await updateWinBySessionId(sessionId, parseInt(sessionData.win + parseInt(spin.score) * bet))
+                    if (coins && win || parseInt(win) === 0 || parseInt(coins) === 0) {
+                        res.json({
+                            // board : [
+                            //     ['W','W','W'],
+                            //     ['W','W','W'],
+                            //     ['W','W','W']
+                            // ],
+                            board: board,
+                            coins: coins,
+                            bet: bet,
+                            win: win
+                        })
+                        console.log(`session: ${sessionId}, score: ${score}, bet: ${bet} `)
+                        console.log(board)
+                    } else throw new Error('db response error')
                 } else throw new Error('db response error')
-            } else throw new Error('db response error')
+            }
         } else throw new Error('db response error')
     } catch (error) { next(error) }
 }
