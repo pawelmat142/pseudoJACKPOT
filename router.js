@@ -5,6 +5,7 @@ const pagesController = require('./controllers/pagesController')
 const gameController = require('./controllers/gameController')
 
 router.get('/', pagesController.home)
+router.post('/scores-page', pagesController.scoresPage)
 
 router.get('/session', gameController.newSession)
 router.get('/session/:sessionId', gameController.getSession)

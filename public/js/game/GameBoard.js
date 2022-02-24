@@ -103,7 +103,7 @@ export class GameBoard {
     highlightLinesTogether = async (lines) => {
         await sleep(config.spin.highLightInterval*1.1)
         this.audio.highlights.play()
-        this.audio.highlightAll.play()
+        this.audio.highlightsAll.play()
         lines.forEach(line => this.highlightLine(line))
     }
 

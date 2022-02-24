@@ -8,6 +8,7 @@ String.prototype.capitalize = function() {
 
 export class GameUI {
 
+
     constructor(gameBoard, httpClient, audioManager) {
 
         this.board = gameBoard
@@ -27,6 +28,7 @@ export class GameUI {
     }
 
 
+
     constrolsInit = () => {
         if (Array.isArray(config.DOMids.controls)) 
             config.DOMids.controls.forEach(item => {
@@ -35,17 +37,26 @@ export class GameUI {
             })
     }
 
+
+
     sessionInit = async () => {
         let sessionId = localStorage.getItem('sessionId')
+        console.log('sessionId')
+        console.log(sessionId)
         if (!sessionId) {
             const newSession = await this.http.newSession()
+            console.log('newSession')
+            console.log(newSession)
             localStorage.setItem('sessionId', newSession)
         }
         const sessions = localStorageSetSessions()
         console.log(sessions)
 
-        this.setDisplayState(await this.http.getSessionData())
+        const sessionData = await this.http.getSessionData()
+        console.log(sessionData)
+        this.setDisplayState(sessionData)
     }
+
 
 
     // BUTTONS
@@ -71,6 +82,7 @@ export class GameUI {
     }
     
 
+
     onTransfer = async () => {
         this.modal.open()
         this.modal.setHeader(`Transfer WIN > COINS`)
@@ -78,14 +90,18 @@ export class GameUI {
         this.modal.put(this.transferModalInput())
     }
 
+
     
     onReset = async () => {
+        console.log('onReset')
         if (await this.http.stopSession()) {
+            this.audio.reset.play()
             const sessionId = await this.http.newSession()
             localStorage.setItem('sessionId', sessionId)
             this.setDisplayState(await this.http.getSessionData())
         }
     }
+
 
 
     onSpin = async () => {
@@ -94,6 +110,7 @@ export class GameUI {
             try {
                 const spinResponse = await this.http.spin()
                 if (spinResponse === 201) {this.notEnoughCoins(); return 0 }
+                console.log(spinResponse)
                 this.board.setCurrentState(spinResponse.board)
                 this.coins.animateTo(spinResponse.coins, config.ui.transferTime, false)
                 setTimeout(() => this.board.stopSpin(), config.spin.spinTime)
@@ -110,9 +127,24 @@ export class GameUI {
     }
 
 
+
     onPlus = () => this.audioManager.volumeUp()
     
+
+
     onMinus = () => this.audioManager.volumeDown()
+
+
+    onScores = async () => {
+        try{
+            const sessionsIds = localStorage.getItem('sessions').split(',')
+            if (Array.isArray(sessionsIds) && sessionsIds.length>0) {
+                const response = await this.http.postHref(sessionsIds, 'scores-page')
+                if (!response) throw new Error('scores page error')
+            } else throw new Error('scores page error')
+        } catch (error) {console.log(error)}
+    }
+
 
 
     notEnoughCoins = () => {
@@ -129,6 +161,7 @@ export class GameUI {
     }
 
 
+
     transferModalInput = () => {
         const input = document.createElement('input')
         input.classList.add('transfer-input')
@@ -138,7 +171,6 @@ export class GameUI {
         input.addEventListener('input', (event) => this.onInputTransfer(event, input))
         return input
     }
-
 
     transferAction = async (e) => {
         this.board.spinFlag = false
@@ -152,11 +184,12 @@ export class GameUI {
         this.board.spinFlag = true
     }
 
-
     onInputTransfer = (e, input) => {
         if (input.value > this.win.get()) input.value = this.win.get()
         if (input.value < 0) input.value = 0
     }
+
+
 
     setDisplayState = (state) => {
         this.coins.set(state.coins)

@@ -15,7 +15,6 @@ const audioManager = new AudioManager(0.6)
 // client side random items generator
 const stateFactory = new StateFactory()
 
-
 // DOM operations - rolling board
 const gameBoard = new GameBoard(stateFactory, audioManager)
 

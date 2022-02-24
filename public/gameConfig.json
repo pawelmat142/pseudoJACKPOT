@@ -41,6 +41,10 @@
       {
         "id": "minus",
         "name": "minus"
+      },
+      {
+        "id": "scores",
+        "name": "scores"
       }
     ]
 
@@ -61,7 +65,7 @@
   
   
   "spin": {
-    "spinTime": 500,   
+    "spinTime": 300,   
     "highLightTime": 280,
     "highLightInterval": 300
   },

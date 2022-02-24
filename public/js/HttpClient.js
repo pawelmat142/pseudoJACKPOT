@@ -3,7 +3,11 @@ export class HttpClient {
     constructor() {
         this.url = '/'
 
-        this.sessionId = localStorage.getItem('sessionId')
+        // this.sessionId = localStorage.getItem('sessionId')
+    }
+
+    get sessionId() {
+        return localStorage.getItem('sessionId')
     }
 
 
@@ -24,6 +28,12 @@ export class HttpClient {
         return await get(`${this.url}session/stop/${this.sessionId}`)
     }
 
+    
+    // SCORES PAGE
+
+    scoresPage = async (sessionsIds) => {
+        return await post(`${this.url}scoresPage`, sessionsIds)
+    }
 
 
     // BET
@@ -82,6 +92,24 @@ export class HttpClient {
             console.log(error)
         }
     }
+
+
+    postHref = (data, endpoint) => {
+        const url = window.location.href + endpoint
+        const input = document.createElement('input')
+        input.setAttribute('type', 'text')
+        input.setAttribute('name', 'data')
+        input.setAttribute('value', data)
+        const form = document.createElement('form')
+        form.setAttribute('action', url)
+        form.setAttribute('method', 'post');
+        form.setAttribute('hidden', 'true');
+        form.appendChild(input)
+        document.body.appendChild(form)
+        form.submit()
+        form.remove()
+        return true
+    }
 }
 
 
@@ -116,4 +144,7 @@ const post = async (url, data) => {
         return error
     }
 }
+
+
+
 

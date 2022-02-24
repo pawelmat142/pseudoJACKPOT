@@ -12,6 +12,8 @@ module.exports = async (sessionId) => {
         .where('id', sessionId)
         .update('stop_time', new Date())
 
+    console.log(rows)
+
     if (rows) result = true
 
     knex.destroy()

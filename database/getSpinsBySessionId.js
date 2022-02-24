@@ -8,11 +8,11 @@ module.exports = async (sessionId) => {
     let result = null
 
     const rows = await knex
-        .from('sessions')
-        .select('id', 'start_time', 'stop_time', 'coins', 'bet', 'win')
-        .where('id', sessionId)
-        
-    if (Array.isArray(rows) && rows.length) result = rows[0]
+        .from('spins')
+        .select('id', 'session_id', 'time', 'score', 'bet')
+        .where('session_id', sessionId)
+
+    if (Array.isArray(rows) && rows.length) result = rows
 
     knex.destroy()
 

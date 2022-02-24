@@ -1,19 +1,11 @@
 const scoreGenerator = require('./ScoreGenerator')
-
-const addSpin = require('../database/addSpin')
-const newSessionId = require('../database/newSessionId')
-const getSessionById = require('../database/getSessionById')
-const stopSessionById = require('../database/stopSessionById')
-const updateCoinsBySessionId = require('../database/updateCoinsBySessionId')
-const updateBetBySessionId = require('../database/updateBetBySessionId')
-const updateWinBySessionId = require('../database/updateWinBySessionId')
-
+const query = require('../database/Query')
 
 // SESSION
 
 exports.newSession = async (req, res, next) => {
     try {
-        const session = await newSessionId()
+        const session = await query.newSessionId()
         if (session) res.json(session)
         else throw new Error('db response error')
     }
@@ -24,9 +16,27 @@ exports.newSession = async (req, res, next) => {
 exports.getSession = async (req, res, next) => {
     try {
         const sessionId = req.params.sessionId
-        const session = await getSessionById(sessionId)
-        if (session) { res.json(session) }
-        else throw new Error('db response error')
+        const lastSpin = await query.getLastSpinBySessionId(sessionId)
+        if (lastSpin) {
+            const minutesAgo = parseInt( ( Date.now() - new Date(lastSpin.time).getTime() ) / 1000 / 60 )
+            if (minutesAgo < 10) {
+                const session = await query.getSessionById(sessionId)
+                if (session) { res.json(session) }
+                else throw new Error('db response error')
+            }
+            else {
+                const newSessionId = await query.newSessionId()
+                if (newSessionId) {
+                    const session = await query.getSessionById(newSessionId)
+                    if (session) res.json(session)
+                    else throw new Error('new session error')
+                } else throw new Error('db response error')
+            }
+        } else {
+            const session = await query.getSessionById(sessionId)
+            if (session) { res.json(session) }
+            else throw new Error('db response error')
+        }
     }
     catch (error) { next(error) }
 }
@@ -35,8 +45,8 @@ exports.getSession = async (req, res, next) => {
 exports.stopSession = async (req, res, next) => {
     try {
         const sessionId = req.params.sessionId
-        const sessionData = await stopSessionById(sessionId)
-        if (sessionData) { res.json(sessionData) }
+        console.log(sessionId)
+        if (await query.stopSessionById(sessionId)) res.json(true)
         else throw new Error('db response error')
     }
     catch (error) { next(error) }
@@ -48,10 +58,10 @@ exports.stopSession = async (req, res, next) => {
 exports.betUp = async (req, res, next) => {
     try {
         const sessionId = req.params.sessionId
-        const sessionData = await getSessionById(sessionId)
+        const sessionData = await query.getSessionById(sessionId)
         if (sessionData) { 
             let bet = parseInt(sessionData.bet)
-            const result = await updateBetBySessionId(sessionId, bet + 1)
+            const result = await query.updateBetBySessionId(sessionId, bet + 1)
             if (result) res.json(bet + 1)
             else throw new Error('db response error')
         }
@@ -64,11 +74,11 @@ exports.betUp = async (req, res, next) => {
 exports.betDown = async (req, res, next) => {
     try {
         const sessionId = req.params.sessionId
-        const sessionData = await getSessionById(sessionId)
+        const sessionData = await query.getSessionById(sessionId)
         if (sessionData) {
             let bet = parseInt(sessionData.bet)
             if (bet > 1) {
-                const result = await updateBetBySessionId(sessionId, bet - 1)
+                const result = await query.updateBetBySessionId(sessionId, bet - 1)
                 if (result) res.json(bet - 1)
                 else throw new Error('db response error')
             } else res.json(bet)
@@ -84,11 +94,11 @@ exports.transfer = async (req, res, next) => {
     try {
         const transfer = parseInt(req.body.transfer)
         const sessionId = req.params.sessionId
-        const sessionData = await getSessionById(sessionId)
+        const sessionData = await query.getSessionById(sessionId)
         if (sessionData) {
             if (transfer <= sessionData.win) {
-                let win = await updateWinBySessionId(sessionId, sessionData.win - transfer) 
-                let coins = await updateCoinsBySessionId(sessionId, sessionData.coins + transfer)
+                let win = await query.updateWinBySessionId(sessionId, sessionData.win - transfer) 
+                let coins = await query.updateCoinsBySessionId(sessionId, sessionData.coins + transfer)
                 if (win && coins || parseInt(win) === 0) {
                     res.json({
                         coins: coins,
@@ -109,15 +119,15 @@ exports.spin = async (req, res, next) => {
         const score = scoreGenerator.getScore()
         const board = scoreGenerator.getBoard(score)
         const sessionId = req.params.sessionId
-        const sessionData = await getSessionById(sessionId)
+        const sessionData = await query.getSessionById(sessionId)
         if (sessionData) {
             const bet = parseInt(sessionData.bet)
             if (sessionData.coins < sessionData.bet) res.status(201).json({board: "not enough win"})
             else {
-                const spin = await addSpin(sessionId, score, bet)
+                const spin = await query.addSpin(sessionId, score, bet)
                 if (spin) {
-                    const coins = await updateCoinsBySessionId(sessionId, parseInt(sessionData.coins - bet))
-                    const win = await updateWinBySessionId(sessionId, parseInt(sessionData.win + parseInt(spin.score) * bet))
+                    const coins = await query.updateCoinsBySessionId(sessionId, parseInt(sessionData.coins - bet))
+                    const win = await query.updateWinBySessionId(sessionId, parseInt(sessionData.win + parseInt(spin.score) * bet))
                     if (coins && win || parseInt(win) === 0 || parseInt(coins) === 0) {
                         res.json({
                             // board : [
