@@ -3,12 +3,18 @@
     height: calc(50vw/1.618);
     display: flex;
     border: 1px solid red;
-    overflow: hidden;
     margin-top: 100px;
+    position: relative;
 }
 
-#game-board .column {
+#game-board .column-wrapper {
     width: 100%;
+    overflow: hidden;
+}
+
+#game-board .column-wrapper .column {
+    width: 100%;
+    height: 100%;
 }
 
 #game-board .column .item-wrapper {
@@ -28,18 +34,18 @@
     max-height: 100%;
     border-radius: 50%;
     transition: .15s ease;
-    /* border: 3px solid transparent; */
     border: 5px;
     border-style: solid;
     border-color: transparent;
     border-color: transparent;
 }
 
-
 :root {
     --high-light-time: .3s;
+    --rows: 3;
+    --cols: 3;
+    --item-height: calc(100% / var(--rows) )
 }
-
 
 #game-board .column .item-wrapper.high-light img {
     animation: high-light var(--high-light-time) ease-in-out forwards; 
@@ -67,6 +73,126 @@
 }
 
 
+/* XXX */
+#game-board > .xxx {
+    position: absolute;
+    top: -5px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid green;
+}
+
+#game-board > .xxx > .line {
+    position: absolute;
+    left: -5%;
+    width: 110%;
+    height: 10px;
+    /* background-color: rgb(0, 192, 48); */
+    border-radius:10px;
+    border: 3px solid rgba(70,32,171,0.75);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transform: scaleY(0) scaleX(0.85);
+    transition: .08s ease;
+    box-shadow: 0px 0px 10px 5px rgba(70,32,171,0.75);
+}
+
+#game-board > .xxx > .line.active {
+    transform: scaleY(1) scaleX(1)
+}
+
+@keyframes line-highlight {
+    0% {transform: scaleY(0)}
+    20% {transform: scaleY(1)}
+    40% {transform: scaleY(1)}
+    100% {transform: scaleY(0)}
+}
+
+
+#game-board > .xxx > .line > span {
+    position: relative;
+    font-size: 70px;
+    font-weight: bold;
+    color:rgba(70,32,171,0.75);
+}
+
+#game-board > .xxx > .line > span.left {left: -12%;}
+
+#game-board > .xxx > .line > span.right {right: -12%;}
+
+#game-board > .xxx > .line:nth-of-type(1) { 
+    top: calc( calc(var(--item-height)/2) + calc(var(--item-height)*0) )
+}
+
+#game-board > .xxx .line:nth-of-type(2) { 
+    top: calc( calc(var(--item-height)/2) + calc(var(--item-height)*1) )
+}
+
+#game-board > .xxx .line:nth-of-type(3) { 
+    top: calc( calc(var(--item-height)/2) + calc(var(--item-height)*2) )
+}
+
+
+#game-board > .xxx > .line.x {
+    width: 120%;
+    left: -10%;
+    top: 50%;
+    transform: scale(1);
+    transform: scaleY(0) scaleX(0.85);
+}
+
+
+#game-board > .xxx > .line.x:nth-of-type(4) {
+    transform: rotate(30deg) scaleY(0);
+}
+#game-board > .xxx > .line.x.line.active:nth-of-type(4) {
+    transform: rotate(30deg) scale(1);
+}
+#game-board > .xxx > .line.x:nth-of-type(4) > span {
+    transform: rotate(-30deg)
+}
+
+
+#game-board > .xxx > .line.x:nth-of-type(5) {
+    transform: rotate(-30deg) scaleY(0);
+}
+#game-board > .xxx > .line.x.active:nth-of-type(5) {
+    transform: rotate(-30deg) scaleY(1);
+}
+#game-board > .xxx > .line.x:nth-of-type(5) > span {
+    transform: rotate(30deg)
+}
+
+#game-board > .xxx > .line.x:nth-of-type(4) > .left
+#game-board > .xxx > .line.x:nth-of-type(5) > .right {
+    top: 30px;
+}
+
+
+
+/* @keyframes line-highlight-x {
+    0% {transform: scaleY(0)}
+    20% {transform: scaleY(1)}
+    40% {transform: scaleY(1)}
+    100% {transform: scaleY(0)}
+}
+
+@keyframes line-highlight-x-1 {
+    0% {transform: scaleY(0)}
+    20% {transform: scaleY(1)}
+    40% {transform: scaleY(1)}
+    100% {transform: scaleY(0)}
+} */
+
+
+
+
+
+
+
+
 @media (max-width: 1200px) {
     #game-board {
         width: 70vw;
@@ -74,6 +200,8 @@
     }
 
 }
+
+
 
 
 @media (max-width: 768px) {
@@ -87,6 +215,9 @@
     }
 
 }
+
+
+
 
 @media (max-width: 576px) {
     #game-board {

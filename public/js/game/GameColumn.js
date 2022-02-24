@@ -13,11 +13,11 @@ export class GameColumn {
 
         this.rows = config.board.rows
         this.cols = config.board.cols
-        this.minInterval = config.rollConfig.minInterval
-        this.maxInterval = config.rollConfig.maxInterval
-        this.stopInterval = config.rollConfig.stopInterval
-        this.step = config.rollConfig.step
-        this.highLightTime = config.rollConfig.highLightTime    //should be same as css:root{--high-light-time}
+        this.minInterval = config.roll.minInterval
+        this.maxInterval = config.roll.maxInterval
+        this.stopInterval = config.roll.stopInterval
+        this.step = config.roll.step
+        this.highLightTime = config.spin.highLightTime    //should be same as css:root{--high-light-time}
 
         this.isRolling = false
         this.stopFlag = false
@@ -49,6 +49,8 @@ export class GameColumn {
         const start =  await this.startRoll()
         const constStart = await this.constRoll(start)
         await this.stopRoll(constStart)
+        this.audio.spinning.pause()
+        this.audio.spinning.load()
         return 'a'
     }
 

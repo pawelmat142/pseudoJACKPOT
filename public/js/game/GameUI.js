@@ -55,6 +55,7 @@ export class GameUI {
         if (newBet !== this.bet.get()) {
             this.audio.betUp.play()
             this.bet.set(newBet)
+            this.board.bet = newBet
         }
     }
     
@@ -64,6 +65,8 @@ export class GameUI {
         if (newBet !== this.bet.get()) {
             this.audio.betDown.play()
             this.bet.set(newBet)
+            this.board.bet = newBet
+            console.log(this.board.bet)
         } 
     }
     
@@ -89,21 +92,12 @@ export class GameUI {
 
         if (this.board.spinFlag) {
             try {
-                this.audio.spin.play()
-                this.audio.spinning.play()
                 const spinResponse = await this.http.spin()
-                if (spinResponse === 201) {
-                    this.notEnoughWin()
-                    return 0
-                }
+                if (spinResponse === 201) {this.notEnoughCoins(); return 0 }
                 this.board.setCurrentState(spinResponse.board)
                 this.coins.animateTo(spinResponse.coins, config.ui.transferTime, false)
-                console.log(spinResponse)
-    
-                setTimeout(() => this.board.stopSpin(), config.rollConfig.spinTime)
+                setTimeout(() => this.board.stopSpin(), config.spin.spinTime)
                 await this.board.spin()
-                this.audio.spinning.pause()
-                this.audio.spinning.load()
                 await this.board.highlightScore()
                 
                 if (spinResponse.win > this.win.get()) this.win.animateTo(spinResponse.win, config.ui.transferTime, true)
@@ -121,7 +115,7 @@ export class GameUI {
     onMinus = () => this.audioManager.volumeDown()
 
 
-    notEnoughWin = () => {
+    notEnoughCoins = () => {
         this.audio.spin.pause()
         this.audio.spinning.pause()
         this.audio.spin.load()
@@ -164,11 +158,11 @@ export class GameUI {
         if (input.value < 0) input.value = 0
     }
 
-
     setDisplayState = (state) => {
         this.coins.set(state.coins)
         this.bet.set(state.bet)
         this.win.set(state.win)
+        this.board.bet = state.bet
     }
 }
 

@@ -19,11 +19,14 @@ export class GameBoard {
         )
 
         this.spinFlag = true
+        this.bet = 0
     }
 
 
     spin = async () => {
         if (this.spinFlag) {
+            this.audio.spin.play()
+            this.audio.spinning.play()
             this.spinFlag = false
             let promises = this.columns.map(col => col.spin())
             return Promise.all(promises)
@@ -32,7 +35,7 @@ export class GameBoard {
 
 
     stopSpin = () => this.columns.forEach((column, i) => {
-        if (!this.spinFlag) setTimeout(() => column.stopFlag = true, config.rollConfig.stopDelay*i) 
+        if (!this.spinFlag) setTimeout(() => column.stopFlag = true, config.roll.stopDelay*i) 
         else console.log('is rolling: ' + this.isRolling)
     })
     
@@ -52,14 +55,15 @@ export class GameBoard {
     }
 
 
+
     highlightScore = async () => {
         const scoreLines = getScoreLines(this.currentState)
-        await sleep(config.rollConfig.highLightInterval*0.3)
+        await sleep(config.spin.highLightInterval*0.3)
         await this.highlightLines(scoreLines)
-        await sleep(config.rollConfig.highLightInterval*0.15)
-        if (scoreLines.length > 2) await this.highlightLinesTogether(scoreLines, 0)
-        if (scoreLines.length > 4) await this.highlightLinesTogether(scoreLines, 1)
-        await sleep(config.rollConfig.highLightInterval*0.3)
+        await sleep(config.spin.highLightInterval*0.15)
+        if (scoreLines.length > 2) await this.highlightLinesTogether(scoreLines)
+        if (scoreLines.length > 4) await this.highlightLinesTogether(scoreLines)
+        await sleep(config.spin.highLightInterval*0.3)
     }
 
 
@@ -71,7 +75,7 @@ export class GameBoard {
                     this.audio.highlights.play()
                     this.highlightLine(line)
                     resolve()
-                }, config.rollConfig.highLightInterval*i)
+                }, config.spin.highLightInterval*i)
             })
         })
         return Promise.all(promises)
@@ -83,21 +87,49 @@ export class GameBoard {
         if (Array.from(line).shift() === 'r') {
             const rowIndex = parseInt(Array.from(line).pop())
             this.columns.forEach(col => col.highLight([rowIndex]))
+            this.highlight(rowIndex, this.currentState[0][rowIndex])
             return rowIndex
         }
         if (Array.from(line).shift() === 'x') {
             const index = parseInt(Array.from(line).pop())
             this.columns.forEach((col, ind) => col.highLight([Math.abs(index - ind)]))
+            this.highlight(index, this.currentState[0][index], 'x')
             return index
         }
     }
 
 
+
     highlightLinesTogether = async (lines) => {
-        await sleep(config.rollConfig.highLightInterval)
+        await sleep(config.spin.highLightInterval*1.1)
         this.audio.highlights.play()
         this.audio.highlightAll.play()
         lines.forEach(line => this.highlightLine(line))
+    }
+
+
+
+    highlight = (i, item, type) => {
+        let score = config.availableItems.filter(el => el.name === item)[0].score * this.bet
+        let selector = type === 'x' ? '#game-board > .xxx > .line.x' :  '#game-board > .xxx > .line'
+        if (type === 'x' && i>1) i--
+        let element = document.querySelectorAll(selector)[i]
+        element.querySelector('.right').innerHTML = score
+        element.querySelector('.left').innerHTML = score
+        if (!element.classList.contains('active')) {
+            element.classList.add('active')
+            setTimeout(() => {
+                if (element.classList.contains('active')) element.classList.remove('active')
+            },config.spin.highLightInterval*1.1)
+        }
+        else {
+            setTimeout(() => {
+                element.classList.add('active')
+                setTimeout(() => {
+                    if (element.classList.contains('active')) element.classList.remove('active')
+                },config.spin.highLightInterval*1)
+            },config.spin.highLightInterval*0.5)
+        }
     }
 
 }
