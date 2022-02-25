@@ -7,7 +7,7 @@ export class AudioManager {
 
         this._volume = vol || 1
 
-        this.dir = `./audio/`
+        this.dir = `audio/`
 
         this.it = {
             spinning: new Audio(`${this.dir}spinning.mp3`),
@@ -42,7 +42,7 @@ export class AudioManager {
             betDown: 0.6,
             colsStop: 1,
             changeVolume: 1,
-            clickFail: 1
+            clickFail: 0.5
         }
         this.setVolume(this._volume)
     }

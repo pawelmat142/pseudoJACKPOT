@@ -9,7 +9,7 @@ export class SessionManager {
     }
 
     set id(_id) {
-        localStorage.setItem('sessionId', _id)
+        localStorage.setItem('sessionId', parseInt(_id))
         if (!!_id) this.addToSessions(_id)
         this.http.sessionId = _id
     }
