@@ -63,7 +63,6 @@ export class Modal {
 
         const div = document.createElement('div')
         div.appendChild(modal)
-        div.appendChild(this.getOkButton())
         div.appendChild(closeButton)
         
         const bg = document.createElement('div')
@@ -80,15 +79,6 @@ export class Modal {
     }
 
 
-    getOkButton = () => {
-        const okButton = document.createElement('button')
-        okButton.innerHTML = "ok"
-        okButton.addEventListener('click', (e) => this.onOk(e))
-        okButton.setAttribute('id', 'ok-button')
-        return okButton
-    }
-
-
     removeOkButton = () => {
         const b = document.getElementById('ok-button')
         if (b) b.remove()
@@ -99,13 +89,17 @@ export class Modal {
         const b = document.getElementById('ok-button')
         if (!b) {
             const closeButton = document.querySelector('#modal-bg > div > .close-button')
-            const okButton = this.getOkButton()
+            const okButton = document.createElement('button')
+            okButton.innerHTML = "ok"
+            okButton.addEventListener('click', (e) => this.onOk(e))
+            okButton.setAttribute('id', 'ok-button')
             document.querySelector('#modal-bg > div').insertBefore(okButton, closeButton)
         }
     }
 
 
     onOk = (e) => {
+        this.removeOkButton()
         this.close(false)
         this.okAction(e)
     }

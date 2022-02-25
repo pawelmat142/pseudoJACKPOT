@@ -12,10 +12,9 @@ export class DisplayItem {
         this.value = newValue
     }
 
-    get = () => {
-        return this.value
-    }
+    get = () => this.value
 
+    
     animateTo = (_to, _duration, soundFlag) => {
         this.active()
         return new Promise(resolve => {

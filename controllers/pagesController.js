@@ -28,18 +28,24 @@ exports.scoresPage = async (req, res, next) => {
             const promises = sessionsIds.map(async id => query.getSpinsBySessionId(id))
             const sessionsSpins = await Promise.all(promises)
             if (Array.isArray(sessionsSpins) && sessionsSpins.length>0) {
-                console.log(sessionsSpins)
-                res.render('scoresPage', {
-                    // sessions: sessionsSpins
-                    sessions: sessionsSpins.map(session => session.map(spin => {
-                        const time = new Date(spin.time)
-                        spin.time = time.toLocaleTimeString()
-                        spin.color = spin.score > 0 ? 'green' : 'red'
-                        return spin
-                    }))
+
+                const sessionsOnPage = []
+                sessionsSpins.forEach(session => {
+                    if (!!session) sessionsOnPage.push(
+                        session.map(spin => {
+                            if (spin) {
+                                const time = new Date(spin.time)
+                                spin.time = time.toLocaleTimeString()
+                                spin.color = spin.score > 0 ? 'green' : 'red'
+                                return spin
+                            }
+                        })
+                    )
                 })
+
+                res.render('scoresPage', {sessions: sessionsOnPage})
+
             } else throw new Error('scores page error')
         } else throw new Error('scores page error')
-    }
-    catch(error){ next(error) }
+    } catch(error){ next(error) }
 }

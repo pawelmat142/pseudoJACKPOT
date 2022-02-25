@@ -16,40 +16,33 @@ exports.newSession = async (req, res, next) => {
 exports.getSession = async (req, res, next) => {
     try {
         const sessionId = req.params.sessionId
-        const lastSpin = await query.getLastSpinBySessionId(sessionId)
-        if (lastSpin) {
-            const minutesAgo = parseInt( ( Date.now() - new Date(lastSpin.time).getTime() ) / 1000 / 60 )
-            if (minutesAgo < 10) {
-                const session = await query.getSessionById(sessionId)
-                if (session) { res.json(session) }
-                else throw new Error('db response error')
+        const a = await query.hasSession(sessionId)
+        if (await query.hasSession(sessionId)) {
+            let session = await query.getSessionById(sessionId)
+            const lastSpin = await query.getLastSpinBySessionId(sessionId)
+            if (lastSpin) {
+                const minutesAgo = parseInt( ( Date.now() - new Date(lastSpin.time).getTime() ) / 1000 / 60 )
+                if (minutesAgo > 10) session = newSession()
             }
-            else {
-                const newSessionId = await query.newSessionId()
-                if (newSessionId) {
-                    const session = await query.getSessionById(newSessionId)
-                    if (session) res.json(session)
-                    else throw new Error('new session error')
-                } else throw new Error('db response error')
-            }
-        } else {
-            const session = await query.getSessionById(sessionId)
-            if (session) { res.json(session) }
-            else throw new Error('db response error')
-        }
-    }
-    catch (error) { next(error) }
+            res.json(session)
+        } else res.json(await newSession())
+    } catch (error) { next(error) }
+}
+
+
+const newSession = async () => {
+    const newSessionId = await query.newSessionId()
+    if (newSessionId) return await query.getSessionById(newSessionId)
+    else throw new Error('new session error')
 }
 
 
 exports.stopSession = async (req, res, next) => {
     try {
         const sessionId = req.params.sessionId
-        console.log(sessionId)
         if (await query.stopSessionById(sessionId)) res.json(true)
         else throw new Error('db response error')
-    }
-    catch (error) { next(error) }
+    } catch (error) { next(error) }
 }
 
 
@@ -129,19 +122,21 @@ exports.spin = async (req, res, next) => {
                     const coins = await query.updateCoinsBySessionId(sessionId, parseInt(sessionData.coins - bet))
                     const win = await query.updateWinBySessionId(sessionId, parseInt(sessionData.win + parseInt(spin.score) * bet))
                     if (coins && win || parseInt(win) === 0 || parseInt(coins) === 0) {
-                        res.json({
-                            // board : [
-                            //     ['W','W','W'],
-                            //     ['W','W','W'],
-                            //     ['W','W','W']
-                            // ],
-                            board: board,
-                            coins: coins,
-                            bet: bet,
-                            win: win
-                        })
-                        console.log(`session: ${sessionId}, score: ${score}, bet: ${bet} `)
-                        console.log(board)
+                        if (await query.stopSessionById(sessionId)) {
+                            res.json({
+                                // board : [
+                                //     ['W','W','W'],
+                                //     ['W','W','W'],
+                                //     ['W','W','W']
+                                // ],
+                                board: board,
+                                coins: coins,
+                                bet: bet,
+                                win: win
+                            })
+                            console.log(`session: ${sessionId}, score: ${score}, bet: ${bet} `)
+                            console.log(board)
+                        } else throw new Error('db response error')
                     } else throw new Error('db response error')
                 } else throw new Error('db response error')
             }

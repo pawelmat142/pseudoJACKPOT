@@ -10,6 +10,7 @@ class Query {
         this.updateWinBySessionId = require('./updateWinBySessionId')
         this.getLastSpinBySessionId = require('./getLastSpinBySessionId')
         this.getSpinsBySessionId = require('./getSpinsBySessionId')
+        this.hasSession = require('./hasSession')
     }
 }
 

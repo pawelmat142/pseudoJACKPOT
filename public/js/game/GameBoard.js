@@ -18,16 +18,24 @@ export class GameBoard {
             new GameColumn(columnState, this.board, colIndex, this.factory, this.audio)
         )
 
-        this.spinFlag = true
+        this.spinFlag = false
         this.bet = 0
+    }
+
+    get isRolling() {
+        let flag = false
+        this.columns.forEach(col => {
+            if (col.isRolling) flag = true
+        })
+        return flag
     }
 
 
     spin = async () => {
-        if (this.spinFlag) {
+        if (this.spinFlag && !this.isRolling) {
+            this.spinFlag = false
             this.audio.spin.play()
             this.audio.spinning.play()
-            this.spinFlag = false
             let promises = this.columns.map(col => col.spin())
             return Promise.all(promises)
         } else console.log('is rolling: ' + this.isRolling)
@@ -46,13 +54,7 @@ export class GameBoard {
     }
 
 
-    get isRolling() {
-        let flag = false
-        this.columns.forEach(col => {
-            if (col.isRolling) flag = true
-        })
-        return flag
-    }
+    
 
 
 

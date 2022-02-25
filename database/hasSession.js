@@ -1,5 +1,4 @@
-// finds session by id in db and sets stop time
-// returns true if succes, false otherwise
+// selects session by id and returns whole row or false
 
 module.exports = async (sessionId) => {
 
@@ -8,13 +7,15 @@ module.exports = async (sessionId) => {
 
     let result = false
 
-    const rows = await knex('sessions')
+    const rows = await knex
+        .from('sessions')
+        .select('id',)
         .where('id', sessionId)
-        .update('stop_time', new Date())
 
-    if (rows) result = true
+    if (Array.isArray(rows) && rows.length) result = true
 
     knex.destroy()
 
     return result
+
 }

@@ -1,15 +1,20 @@
 export class HttpClient {
 
     constructor() {
+
         this.url = '/'
 
-        // this.sessionId = localStorage.getItem('sessionId')
+        this._sessionId = 0
+
     }
 
     get sessionId() {
-        return localStorage.getItem('sessionId')
+        return this._sessionId
     }
 
+    set sessionId(id) {
+        this._sessionId = id
+    }
 
 
     // SESSION

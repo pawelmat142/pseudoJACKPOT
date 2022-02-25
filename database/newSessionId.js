@@ -1,6 +1,6 @@
 // generates new session data
 // inserts new session in db 
-// returns new session id or false
+// returns new session id as number or false
 
 module.exports = async () => {
 
@@ -10,8 +10,8 @@ module.exports = async () => {
     let result = false
 
     const sessionId = await knex('sessions').insert(newSession)
-
-    if (sessionId) result = sessionId
+    
+    if (sessionId) result = sessionId.pop()
 
     knex.destroy()
 

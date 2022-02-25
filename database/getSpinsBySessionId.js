@@ -5,7 +5,7 @@ module.exports = async (sessionId) => {
     const {db_config} = require('../config')
     const knex = require('knex')(db_config)
 
-    let result = null
+    let result = false
 
     const rows = await knex
         .from('spins')
