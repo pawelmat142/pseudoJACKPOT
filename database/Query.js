@@ -1,4 +1,3 @@
-
 class Query {
     constructor() {
         this.addSpin = require('./addSpin')
@@ -13,5 +12,4 @@ class Query {
         this.hasSession = require('./hasSession')
     }
 }
-
 module.exports = new Query()

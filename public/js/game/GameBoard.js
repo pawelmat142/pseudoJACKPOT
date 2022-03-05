@@ -32,10 +32,8 @@ export class GameBoard {
 
 
     spin = async () => {
-        if (this.spinFlag && !this.isRolling) {
+        if (!this.isRolling) {
             this.spinFlag = false
-            this.audio.spin.play()
-            this.audio.spinning.play()
             let promises = this.columns.map(col => col.spin())
             return Promise.all(promises)
         } else console.log('is rolling: ' + this.isRolling)

@@ -9,6 +9,8 @@ export class AudioManager {
 
         this.dir = `audio/`
 
+        this.muted = false
+
         this.it = {
             spinning: new Audio(`${this.dir}spinning.mp3`),
             spin: new Audio(`${this.dir}spin.mp3`),
@@ -28,7 +30,7 @@ export class AudioManager {
         }
 
         this.init = {
-            spinning: 1,
+            spinning: 0.7,
             spin: 0.4,
             moneyTransfer: 1,
             money: 1,
@@ -44,7 +46,8 @@ export class AudioManager {
             changeVolume: 1,
             clickFail: 0.5
         }
-        this.setVolume(this._volume)
+
+        this.volume = this._volume
     }
 
     
@@ -52,15 +55,13 @@ export class AudioManager {
         return this._volume
     }
 
-
-    setVolume = (vol) => {
+    set volume(vol) {
         this._volume = vol
         for (let soundName in this.it) {
-            // console.log(eval(`this.it.${soundName}.volume`))
             let _init = eval(`this.init.${soundName}`)
             eval(`this.it.${soundName}`).volume = vol*_init*config.ui.volume
         }
-    }
+    } 
 
 
     volumeUp = () => {
@@ -69,7 +70,7 @@ export class AudioManager {
             _volume = 1
             this.it.clickFail.play()
         }else this.it.changeVolume.play()
-        this.setVolume(_volume)
+        this.volume = _volume
         return _volume
     }
     
@@ -78,8 +79,27 @@ export class AudioManager {
         let _volume = this.volume - 0.05
         if (_volume < 0) _volume = 0
         this.it.changeVolume.play()
-        this.setVolume(_volume)
+        this.volume = _volume
         return _volume
+    }
+
+
+    mute = (event) => {
+        if (!!this.muted) {
+            this.muted = false
+            event.target.classList.remove('active')
+            for (let key in this.it) {
+                if (this.it[key] instanceof Audio) this.it[key].muted = false
+                if (this.it[key] instanceof AudioArray) this.it[key].mute(false)
+            }
+        } else {
+            this.muted = true
+            event.target.classList.add('active')
+            for (let key in this.it) {
+                if (this.it[key] instanceof Audio) this.it[key].muted = true
+                if (this.it[key] instanceof AudioArray) this.it[key].mute(true)
+            }
+        }
     }
     
 }
@@ -91,6 +111,7 @@ class AudioArray {
         this.array = this.arr5.map(x => new Audio(src))
         this.counter = 0
         this._volume = vol || 1
+        this.muted = false
     }
 
     play = () => {
@@ -98,6 +119,8 @@ class AudioArray {
         this.counter++
         if (this.counter > 4) this.counter = 0
     }
+
+    mute = (state) => this.array.forEach(el => el.muted = state)
 
     get volume() {
         return this.array[0].volume

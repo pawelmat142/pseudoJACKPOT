@@ -16,7 +16,6 @@ exports.newSession = async (req, res, next) => {
 exports.getSession = async (req, res, next) => {
     try {
         const sessionId = req.params.sessionId
-        const a = await query.hasSession(sessionId)
         if (await query.hasSession(sessionId)) {
             let session = await query.getSessionById(sessionId)
             const lastSpin = await query.getLastSpinBySessionId(sessionId)
@@ -28,6 +27,17 @@ exports.getSession = async (req, res, next) => {
         } else res.json(await newSession())
     } catch (error) { next(error) }
 }
+
+
+
+exports.getSessions = async (req, res, next) => {
+    try {
+        const sessionsIds = req.params.sessionsIds.split(',')
+        const promises = sessionsIds.map(async id => query.getSessionById(id))
+        res.json(await Promise.all(promises))
+    } catch (error) { next(error) }
+}
+
 
 
 const newSession = async () => {
@@ -93,11 +103,14 @@ exports.transfer = async (req, res, next) => {
                 let win = await query.updateWinBySessionId(sessionId, sessionData.win - transfer) 
                 let coins = await query.updateCoinsBySessionId(sessionId, sessionData.coins + transfer)
                 if (win && coins || parseInt(win) === 0) {
-                    res.json({
+
+                    const spin = await query.addSpin(sessionId, transfer, -1)
+                    if (!!spin) res.json({
                         coins: coins,
                         bet: sessionData.bet,
                         win: win
                     })
+                    else throw new Error('db response error')
                 } else throw new Error('db response error')
             } else throw new Error('not enough win')
         } else throw new Error('db response error')

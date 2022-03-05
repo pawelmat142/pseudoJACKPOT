@@ -54,11 +54,12 @@
 
 /* controls */
 #game-ui .controls {
-    width: 130%;
+    width: 100%;
     padding-top: 50px;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     column-gap: 20px;
+    row-gap: 20px;
 }
 
 #game-ui .controls > button {
@@ -72,8 +73,10 @@
     justify-content: center;
     align-items: center;
     text-align: center;
+    transition: .1s ease;
 }
 
+#game-ui .controls > button.active,
 #game-ui .controls > button:active {
     background-color: #000;
     color: #fff;

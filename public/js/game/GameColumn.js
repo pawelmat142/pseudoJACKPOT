@@ -49,8 +49,6 @@ export class GameColumn {
         const start =  await this.startRoll()
         const constStart = await this.constRoll(start)
         await this.stopRoll(constStart)
-        this.audio.spinning.pause()
-        this.audio.spinning.load()
         return 'a'
     }
 

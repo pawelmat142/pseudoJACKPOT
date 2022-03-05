@@ -5,6 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your scores - pseudoJACKPOT</title>
+
+    <!-- Favicon -->
+	<link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="img/favicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="img/favicon/favicon-16x16.png">
+	<link rel="manifest" href="img/favicon/site.webmanifest">
+
+    <!-- styles -->
     <link rel="stylesheet" type="text/css" href="css/styles.css">
     <link rel="stylesheet" type="text/css" href="css/scores-page.css">
 </head>
@@ -15,32 +23,10 @@
     </header>
 
     <div id="scores-page">
-        {{#each sessions as |session|}}
-        <div class="session" id="{{session.[0].session_id}}">
 
-            <div class="spins">
-
-                <div class="spin-legend"><p>Lp</p><p>bet</p><p>score</p></div>
-
-                {{#each session as |spin i|}}
-                <div class="spin {{spin.color}}" id="{{spin.id}}">
-                    <div class="lp">{{i}}</div>
-                    <div class="bet">{{spin.bet}}</div>
-                    <div class="score">{{spin.score}}</div>
-                    <div class="time">{{spin.time}}</div>
-                </div>
-                {{/each}}
-
-            </div>
-
-
-        </div>
-        {{/each}}
     </div>
 
+    <script type="module" src="js/scoresPage.js"></script>
 
-<script>
-    
-</script>
 </body>
 </html>

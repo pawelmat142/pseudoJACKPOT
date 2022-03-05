@@ -1,6 +1,7 @@
 module.exports = async (_sessionId, _score, _bet) => {
     const {db_config} = require('../config')
     const knex = require('knex')(db_config)
+    
     let result = false
 
     const spin = {

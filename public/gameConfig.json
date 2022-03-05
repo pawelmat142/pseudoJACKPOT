@@ -31,12 +31,12 @@
         "name": "RESET"
       },
       {
-        "id": "spin",
-        "name": "!SPIN!"
-      },
-      {
         "id": "plus",
         "name": "plus"
+      },
+      {
+        "id": "mute",
+        "name": "mute"
       },
       {
         "id": "minus",
@@ -45,6 +45,14 @@
       {
         "id": "scores",
         "name": "scores"
+      },
+      {
+        "id": "autoplay",
+        "name": "AUTO"
+      },
+      {
+        "id": "spin",
+        "name": "!SPIN!"
       }
     ]
 

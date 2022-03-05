@@ -1,19 +1,10 @@
-const e = require('connect-flash')
 const config = require('../public/gameConfig.json')
 const scores = require("./scores")
-
-const generatorConfig = {
-    maxScore: 100,
-    minScore: 0,
-    chance: 22,
-    divider: 100
-}
-
 
 class ScoreGenerator {
     
     constructor() {
-        this.chance = 40 //has to be integer between 1 to 100
+        // this.chance = 40
         this.chance = 90 //has to be integer between 1 to 100
         this.maxScore = 100 
         this.divider = 100

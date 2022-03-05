@@ -24,8 +24,14 @@ export class HttpClient {
     }
 
 
-    getSessionData = async () => {
-        return await get(`${this.url}session/${this.sessionId}`)
+    getSessionData = async (_id) => {
+        const id = !!_id ? _id : this.sessionId
+        return await get(`${this.url}session/${id}`)
+    }
+
+
+    getSessions = async (_ids) => {
+        return await get(`${this.url}sessions/${_ids}`)
     }
 
 
@@ -33,11 +39,9 @@ export class HttpClient {
         return await get(`${this.url}session/stop/${this.sessionId}`)
     }
 
-    
-    // SCORES PAGE
 
-    scoresPage = async (sessionsIds) => {
-        return await post(`${this.url}scoresPage`, sessionsIds)
+    sessionSpins = async (sessionId) => {
+        return await get(`${this.url}session/${sessionId}/spins`)
     }
 
 
@@ -67,40 +71,8 @@ export class HttpClient {
 
 
 
-    // TEST
-
-    test = async () => {
-        return await get(`${this.url}test`)
-    }
-
-
-
-
-    postTest = async (data) => {
-        const url = this.url + 'test'
-        try {
-            let response = await fetch(url, { 
-                method: 'POST',
-                headers: {"Content-type": "application/json"},
-                body: JSON.stringify(data)
-            })
-            if (response.ok) {
-                const data = await response.json()
-                return data
-            }
-            else {
-                throw new Error(response.status)
-            }
-        }
-        catch (error) {
-            return error
-            console.log(error)
-        }
-    }
-
-
     postHref = (data, endpoint) => {
-        const url = window.location.href + endpoint
+        const url = '/' + endpoint
         const input = document.createElement('input')
         input.setAttribute('type', 'text')
         input.setAttribute('name', 'data')
@@ -115,6 +87,8 @@ export class HttpClient {
         form.remove()
         return true
     }
+
+    
 }
 
 
