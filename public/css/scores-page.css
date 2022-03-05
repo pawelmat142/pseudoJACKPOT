@@ -1,3 +1,4 @@
+
 :root {
     --canvas-margin: 1%;
 }
@@ -15,6 +16,7 @@ header {
     background-color: #a7a7a7;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 0 50px;
 }
 
