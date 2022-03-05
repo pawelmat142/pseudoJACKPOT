@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById('scores-page')
         .appendChild(await generateSessionElement(session, i)))
 
-    window.addEventListener('orientationchange', orientationchange)
+    // window.addEventListener('orientationchange', orientationchange)
 })
 
 const orientationchange = () => {
