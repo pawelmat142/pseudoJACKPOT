@@ -40,8 +40,8 @@ export class Graph {
     get width(){
         let width = 0
         if (typeof this._width === 'string' && this._width.includes('%')) width = parseInt(this._width) * this.canvas.parentNode.offsetWidth / 100
-        if (typeof this._width === 'string' && this._width.includes('px')) width = parseInt(this._width)
-        if (typeof this._width === 'number') width = this._width
+        else if (typeof this._width === 'string' && this._width.includes('px')) width = parseInt(this._width)
+        else if (typeof this._width === 'number') width = this._width
         return width
     }
     
@@ -50,8 +50,8 @@ export class Graph {
     get height() {
         let height = 0
         if (typeof this._width === 'string' && this._width.includes('%')) height = parseInt(this._height) * this.canvas.parentNode.offsetHeight / 100
-        if (typeof this._width === 'string' && this._width.includes('px')) height = parseInt(this._height)
-        if (typeof this._height === 'number') height = this._height
+        else if (typeof this._width === 'string' && this._width.includes('px')) height = parseInt(this._height)
+        else if (typeof this._height === 'number') height = this._height
         return height 
     }
 

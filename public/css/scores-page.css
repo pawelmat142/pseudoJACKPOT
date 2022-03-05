@@ -95,12 +95,13 @@ body p {
 
 #scores-page .session .graph-container {
     height: 0;
-    transition: .15s ease;
+    transition: .2s ease-in-out;
 }
 
 #scores-page .session.open .graph-container {
     height: 670px;
     width: 100%;
+    overflow: hidden;
 }
 
 #scores-page .session .graph-container canvas {
