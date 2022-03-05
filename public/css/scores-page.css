@@ -40,13 +40,17 @@ body p {
 #scores-page .session {
     margin: 0 20px;
     margin-top: 10px;
-    width: calc(100% - 40pxs);
+    width: calc(100% - 40px);
     background-color: #e5e5e5;
     border: 2px solid #a7a7a7;
     border-radius: 5px;
     padding: 0 var(--canvas-margin);
     transition: .1s ease;
-    overflow: hidden;
+    /* overflow: hidden; */
+}
+
+#scores-page .session.open {
+    padding-bottom: 20px;
 }
 
 #scores-page .session .data {
@@ -91,7 +95,6 @@ body p {
 
 #scores-page .session .graph-container {
     height: 0;
-    overflow: hidden;
     transition: .15s ease;
 }
 
@@ -105,16 +108,25 @@ body p {
     border: 1px solid #cfcfcf;
     max-width: 100%;
     border-radius: 5px;
+    height: 0!important;
 }
 
+#scores-page .session.open .graph-container canvas {
+    margin-right: 10px;
+    height: unset !important;
+}
 
 
 
 @media (max-width: 768px) {
 
     #scores-page .session {
-        margin: 0 2px;
-        overflow: unset;
+        margin: 5px 5px 7px;
+        width: calc(100% - 10px);
+    }
+
+    #scores-page .session.open {
+        padding-bottom: 5px;
     }
 
     #scores-page .session .data {
@@ -145,6 +157,7 @@ body p {
 
     /* graph */
     #scores-page .session.open .graph-container {
+        height: 100vh;
         width: 150%;
     }
 }
@@ -157,14 +170,20 @@ body p {
 
     header {
         height: 40px;
-        justify-content: flex-end;
+        flex-direction: row-reverse;
     }
 
     #scores-page .session {
         padding: 0;
         margin: 3px 3px 5px;
+        width: calc(100% - 6px);
+        transition: .2s ease;
     }
     
+    #scores-page .session.open {
+        padding-bottom: 2px;
+    }
+
     #scores-page .session .data {
         padding: 2px;
         grid-template-columns: repeat(3, 1fr);
@@ -188,8 +207,8 @@ body p {
 
     /* graph */
     #scores-page .session.open .graph-container {
-        width: 250%;
-        height: 380px;
+        width: 200%;
+        height: 50vh;
     }
 
     

@@ -10,18 +10,12 @@ var graphs = []
 
 document.addEventListener("DOMContentLoaded", async () => {
 
+    setMobileFlag()     //inserts text flag in header if mobile device
     const sessionsIds = localStorage.getItem('sessions')
     const sessions = !!sessionsIds ? await http.getSessions(sessionsIds) : []
     sessions.reverse().forEach( async (session, i) =>
         document.getElementById('scores-page')
         .appendChild(await generateSessionElement(session, i)))
-
-    setMobileFlag()
-
-    // if (mobile()) {
-    //     setMobileFlag()
-    //     document.body.appendChild(document.createElement('p'))
-    // }
 
 })
 
@@ -96,7 +90,7 @@ const onOpenButton = (event, sessionId) => {
         event.target.innerHTML = 'close'
         if (!clicked.classList.contains('loaded')) {
             clicked.classList.add('loaded')
-            generateGraph(sessionId)
+            setTimeout(() => generateGraph(sessionId),200)
         }
     }
 }
@@ -113,7 +107,8 @@ const generateGraph = async (sessionId) => {
     const config = {
         id: 'graph-' + sessionId,
         width: '100%',
-        height: screen.width > 576 ? 600 : 350
+        height: '100%',
+        // height: screen.width > 576 ? 600 : 350
     }
     const graph = new Graph(config)
     const spins = await http.sessionSpins(sessionId)
@@ -170,5 +165,3 @@ const mobile = () => {
 }
 
 const setMobileFlag = () => document.getElementById('js-mobile-flag').hidden = !mobile()
-// const setMobileFlag = () => document.getElementById('js-mobile-flag').hidden = true
-// const setMobileFlag = () => document.getElementById('js-mobile-flag').hidden = false

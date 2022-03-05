@@ -22,22 +22,17 @@ export class Graph {
         this.gridColor = config.gridColor || '#c8c8c8'
         this.gridNumbersFont = config.gridNumbersFont || screen.width > 576 ? '17px Arial' : '12px Arial'
 
-        this.offsetTop = screen.width > 768 ? 15 : 10
-        this.offsetRight = screen.width > 768 ? 15 : 10
-        this.offsetBottom = screen.width > 768 ? 50 : 30
-        this.offsetLeft = screen.width > 768 ? 70 : 40
-        this.legendHeight = screen.width > 768 ? 50 : 30
-        this.horizontalNumsOffset = screen.width > 768 ? 50 : 40
-        this.verticalNumsOffset = screen.width > 768 ? 40 : 30
+        this.legendHeight = mobile() ? 30 : 50
+        this.offsetTop = mobile() ? 10 : 15 
+        this.offsetRight = mobile() ? 10 : 15 
+        this.offsetBottom = (mobile() ? 30 : 50) + this.legendHeight
+        this.offsetLeft = mobile() ? 40 : 70
+        this.horizontalNumsOffset = mobile() ? 40 : 50
+        this.verticalNumsOffset = mobile() ? 30 : 40
 
         window.addEventListener('resize', this.resize)
         window.addEventListener('orientationchange', this.resize)
         this.resize()
-
-        if (mobile()) {
-            document.getElementById(this.id.split('-').pop()).appendChild(document.createElement('p'))
-        }
-
 
     }
 
@@ -52,7 +47,7 @@ export class Graph {
     
     set width(val) { this._width = val }
     
-    get height(){
+    get height() {
         let height = 0
         if (typeof this._width === 'string' && this._width.includes('%')) height = parseInt(this._height) * this.canvas.parentNode.offsetHeight / 100
         if (typeof this._width === 'string' && this._width.includes('px')) height = parseInt(this._height)
@@ -60,12 +55,12 @@ export class Graph {
         return height 
     }
 
-    set height(val) { this.this._height = val }
+    set height(val) { this._height = val }
 
 
     resize = () => {
         this.canvas.width = this.width
-        this.canvas.height = this.height + this.legendHeight
+        this.canvas.height = this.height 
         if (this.curves.length > 0) this.print()
     }
 
@@ -133,15 +128,14 @@ export class Graph {
         const legendPartWidth = 150
         const x0 = (this.width - this.legends.length*(legendPartWidth+gap) + gap) / 2
         this.legends.forEach((config, i) => {
-            const x = this.width/2
             this.ctx.beginPath()
             this.ctx.strokeStyle = config.color
             this.ctx.lineWidth = config.width
             this.ctx.setLineDash([config.dashed])
             this.ctx.font = this.gridNumbersFont
             this.ctx.fillText(config.name, x0+i*(legendPartWidth+gap)+ legendPartWidth/3*2 + 10, this.height + this.legendHeight/2 + 5)
-            this.ctx.moveTo(x0 + i*(legendPartWidth+gap), this.height + this.legendHeight / 2)
-            this.ctx.lineTo(x0 + i*(legendPartWidth+gap) + legendPartWidth/3*2, this.height + this.legendHeight / 2)
+            this.ctx.moveTo(x0 + i*(legendPartWidth+gap), this.height - this.legendHeight / 2)
+            this.ctx.lineTo(x0 + i*(legendPartWidth+gap) + legendPartWidth/3*2, this.height - this.legendHeight / 2)
             this.ctx.stroke()
             this.ctx.closePath()
         })
@@ -165,7 +159,7 @@ export class Graph {
 
     gridHorizontalLines = (length) => {
         const maxVal = ArraysMaxVal(this.curves.map(curve => curve.yArr))
-        const height = this.height - this.offsetTop - this.offsetBottom
+        const height = this.height - this.offsetTop - this.offsetBottom 
         const l = length > this.linesNumberY ? this.linesNumberY : length
         const step = height / (l-1)
         for (let i = 0; i < l; i++) {
@@ -181,17 +175,16 @@ export class Graph {
     printLegend = () => {
         const gap = 70
         const legendPartWidth = 150
-        const x0 = (this.width - this.legends.length*(legendPartWidth+gap) + gap) / 2
+        const x0 = (this.width - this.legends.length*(legendPartWidth+gap)+gap) / 2
         this.legends.forEach((config, i) => {
-            const x = this.width/2
             this.ctx.beginPath()
             this.ctx.strokeStyle = config.color
             this.ctx.lineWidth = config.width
             this.ctx.setLineDash([config.dashed])
             this.ctx.font = this.gridNumbersFont
-            this.ctx.fillText(config.name, x0+i*(legendPartWidth+gap)+ legendPartWidth/3*2 + 10, this.height + this.legendHeight/2 + 5)
-            this.ctx.moveTo(x0 + i*(legendPartWidth+gap), this.height + this.legendHeight / 2)
-            this.ctx.lineTo(x0 + i*(legendPartWidth+gap) + legendPartWidth/3*2, this.height + this.legendHeight / 2)
+            this.ctx.fillText(config.name, x0+i*(legendPartWidth+gap)+ legendPartWidth/3*2 + 10, this.height - this.legendHeight/2 + 5)
+            this.ctx.moveTo(x0 + i*(legendPartWidth+gap), this.height - this.legendHeight/2)
+            this.ctx.lineTo(x0 + i*(legendPartWidth+gap) + legendPartWidth/3*2, this.height - this.legendHeight/2)
             this.ctx.stroke()
             this.ctx.closePath()
         })
