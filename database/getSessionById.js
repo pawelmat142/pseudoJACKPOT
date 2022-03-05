@@ -12,8 +12,6 @@ module.exports = async (sessionId) => {
         .select('id', 'start_time', 'stop_time', 'coins', 'bet', 'win')
         .where('id', sessionId)
         
-    // console.log('rows:')
-    // console.log(rows)
     if (Array.isArray(rows) && !!rows.length) result = rows[0]
 
     knex.destroy()

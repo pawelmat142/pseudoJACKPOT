@@ -1,9 +1,11 @@
 import { HttpClient } from './HttpClient.js'
-import { MyGraph } from './MyGraph.js'
 import { Graph } from './Graph.js'
+import { SessionManager } from './game/SessionManager.js'
 
 
 const http = new HttpClient()
+const sessionManager = new SessionManager(http)
+var graphs = []
 
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -13,7 +15,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     sessions.reverse().forEach( async (session, i) =>
         document.getElementById('scores-page')
         .appendChild(await generateSessionElement(session, i)))
+
+    window.addEventListener('orientationchange', orientationchange)
 })
+
+const orientationchange = () => {
+    if (screen.height > screen.width) {
+        console.log('to vertical')
+        
+    }
+    else {
+        console.log('to horizontal')
+    }
+
+    if (!!graphs.length) setTimeout(() => graphs.forEach(graph => graph.resize()), 1000)
+}
 
 
 const generateSessionElement = async (sessionData, i) => {
@@ -28,7 +44,8 @@ const generateSessionElement = async (sessionData, i) => {
     const totalCoins = document.createElement('div')
     const totalWin = document.createElement('div')
     const spinsNumber = document.createElement('div')
-    const button = document.createElement('button')
+    const openButton = document.createElement('button')
+    const removeButton = document.createElement('button')
 
     const graph = document.createElement('canvas')
     graph.setAttribute('id', 'graph-' + sessionData.id)
@@ -39,7 +56,7 @@ const generateSessionElement = async (sessionData, i) => {
 
     const spins = await http.sessionSpins(sessionData.id)
     
-    lp.innerHTML = i
+    lp.innerHTML = i+1
     date.innerHTML = new Date(sessionData.start_time).toLocaleDateString()
     startTime.innerHTML = new Date(sessionData.start_time).toLocaleTimeString()
     stopTime.innerHTML = new Date(sessionData.stop_time).toLocaleTimeString()
@@ -48,9 +65,11 @@ const generateSessionElement = async (sessionData, i) => {
     totalCoins.innerHTML = '100'
     totalWin.innerHTML = getTotalWin(spins)
     spinsNumber.innerHTML = Array.isArray(spins) ? spins.length : 0
-    button.addEventListener('click', (event) => toggleButton(event, sessionData.id))
-    button.innerHTML = 'open'
-    
+    openButton.addEventListener('click', (event) => onOpenButton(event, sessionData.id))
+    removeButton.addEventListener('click', (event) => onRemoveButton(event, sessionData.id))
+    openButton.innerHTML = 'open'
+    removeButton.innerHTML = 'remove'
+
     container.appendChild(lp)
     container.appendChild(date)
     container.appendChild(startTime)
@@ -60,7 +79,8 @@ const generateSessionElement = async (sessionData, i) => {
     container.appendChild(totalCoins)
     container.appendChild(totalWin)
     container.appendChild(spinsNumber)
-    container.appendChild(button)
+    container.appendChild(openButton)
+    container.appendChild(removeButton)
     container.classList.add('data')
     
     sessionEl.appendChild(container)
@@ -71,7 +91,7 @@ const generateSessionElement = async (sessionData, i) => {
 }
 
 
-const toggleButton = (event, sessionId) => {
+const onOpenButton = (event, sessionId) => {
     const clicked = document.getElementById(sessionId)
     if (clicked.classList.contains('open')) {
         clicked.classList.remove('open')
@@ -88,12 +108,18 @@ const toggleButton = (event, sessionId) => {
 }
 
 
+const onRemoveButton = (event, sessionId) => {
+    sessionManager.removeFromSessions(parseInt(sessionId))
+    document.getElementById(sessionId).remove()
+}
+
+
 // GRAPHS
 const generateGraph = async (sessionId) => {
     const config = {
         id: 'graph-' + sessionId,
         width: '100%',
-        height: 600,
+        height: screen.width > 576 ? 600 : 350
     }
     const graph = new Graph(config)
     const spins = await http.sessionSpins(sessionId)

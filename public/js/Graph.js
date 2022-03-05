@@ -3,8 +3,8 @@ export class Graph {
     constructor (config) {
 
         this.id = config.id
-        this._width = config.width
-        this._height = config.height
+        this._width = config.width || '100%'
+        this._height = config.height || '100%'
         this.canvas = document.getElementById(this.id)
         this.ctx = this.canvas.getContext("2d")
 
@@ -15,22 +15,26 @@ export class Graph {
         // grid
         this.gridOnY = config.gridOnY || false
         this.gridOnX = config.gridOnX || false
-        this.linesNumberY = config.linesNumberY || 5
+        this.linesNumberY = config.linesNumberY || 8
         this.linesNumberX = config.linesNumberX || 5
         this.gridWidth =  config.gridWidth || 1
         this.gridDashed = config.gridDashed || 15
         this.gridColor = config.gridColor || '#c8c8c8'
-        this.gridNumbersFont = config.gridNumbersFont || '17px Arial'
+        this.gridNumbersFont = config.gridNumbersFont || screen.width > 576 ? '17px Arial' : '12px Arial'
 
-        this.offsetTop = 15
-        this.offsetRight = 15
-        this.offsetBottom = 50
-        this.offsetLeft = 70
-        this.legendHeight = 50
+        this.offsetTop = screen.width > 576 ? 15 : 10
+        this.offsetRight = screen.width > 576 ? 15 : 10
+        this.offsetBottom = screen.width > 576 ? 50 : 30
+        this.offsetLeft = screen.width > 576 ? 70 : 40
+        this.legendHeight = screen.width > 576 ? 50 : 30
+        this.horizontalNumsOffset = screen.width > 576 ? 50 : 40
+        this.verticalNumsOffset = screen.width > 576 ? 40 : 30
 
         window.addEventListener('resize', this.resize)
         this.resize()
+
     }
+
 
     get width(){
         let width = 0
@@ -142,7 +146,7 @@ export class Graph {
         const width = this.width - this.offsetLeft - this.offsetRight
         const step = width / (length-1)
         const print = (i) => {
-            this.ctx.fillText(i, this.offsetLeft + step*i -8, this.height - this.offsetBottom + 40)
+            this.ctx.fillText(i, this.offsetLeft + step*i -8, this.height - this.offsetBottom + this.verticalNumsOffset)
             this.ctx.moveTo(this.offsetLeft + step*i, this.height - this.offsetBottom + 12)
             this.ctx.lineTo(this.offsetLeft + step*i, this.offsetTop)
             this.ctx.stroke()
@@ -159,7 +163,7 @@ export class Graph {
         const l = length > this.linesNumberY ? this.linesNumberY : length
         const step = height / (l-1)
         for (let i = 0; i < l; i++) {
-            this.ctx.fillText(parseInt(i*step*maxVal/height), this.offsetLeft - 50, this.height - this.offsetBottom - step*i +5)
+            this.ctx.fillText(parseInt(i*step*maxVal/height), this.offsetLeft - this.horizontalNumsOffset, this.height - this.offsetBottom - step*i +5)
             this.ctx.moveTo(this.offsetLeft - 12, this.height - this.offsetBottom - step*i)
             this.ctx.lineTo(this.width - this.offsetRight, this.height - this.offsetBottom - step*i)
             this.ctx.stroke()
@@ -185,6 +189,12 @@ export class Graph {
             this.ctx.stroke()
             this.ctx.closePath()
         })
+    }
+
+
+
+    orientationchange = () => {
+        console.log('orientationchange')
     }
 
 

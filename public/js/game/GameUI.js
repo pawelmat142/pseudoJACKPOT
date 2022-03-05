@@ -106,19 +106,14 @@ export class GameUI {
 
 
 
-    onAutoplay = () => {
+    onAutoplay = async () => {
         this.autoplay = !this.autoplay
-        if (this.autoplay) this.autoplays()
-    }
-
-
-    autoplays = async () => {
-        for (;;) if (this.autoplay) {
+        if (this.autoplay) for(;;) if (this.autoplay) {
             if (!await this.onSpin()) break
-            console.log('spin')
         } else break
     }
 
+    
 
     onSpin = async () => {
         if (this.board.spinFlag) {
@@ -152,18 +147,7 @@ export class GameUI {
 
     onMinus = () => this.audioManager.volumeDown()
 
-
-    onScores = async () => {
-        window.location.href = 'scores-page'
-        // try{
-        //     const sessionsIds = this.session.sessions
-        //     if (Array.isArray(sessionsIds) && sessionsIds.length>0) {
-        //         const response = await this.http.postHref(sessionsIds, 'scores-page')
-        //         if (!response) throw new Error('scores page error')
-        //     } else throw new Error('scores page error')
-        // } catch (error) {console.log(error)}
-    }
-
+    onScores = async () => window.location.href = 'scores-page'
 
     // xx
 

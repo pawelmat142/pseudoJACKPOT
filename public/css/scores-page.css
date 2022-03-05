@@ -26,34 +26,37 @@ header .exit {
 header .exit:hover {transform: scale(1.2);}
 
 
-#scores-page .session {
-    border: 2px solid #a7a7a7;
-    background-color: #e5e5e5;
-    width: 100%;
-    margin-top: 10px;
-    padding: 0 var(--canvas-margin);
+#scores-page {
+    padding-bottom: 50px;
 }
 
 #scores-page .session {
-    cursor: pointer;
+    margin: 0 20px;
+    margin-top: 10px;
+    width: calc(100% - 40pxs);
+    background-color: #e5e5e5;
+    border: 2px solid #a7a7a7;
+    border-radius: 5px;
+    padding: 0 var(--canvas-margin);
     transition: .1s ease;
     overflow: hidden;
-}
-
-#scores-page .session:hover {
-    background-color: #bbbbbb;
 }
 
 #scores-page .session .data {
     padding: 15px 0;
     display: grid;
-    grid-template-columns: 1fr repeat(7, 2fr) 1fr 1fr;
+    grid-template-columns: 1fr 2fr 2fr 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    column-gap: 5px;
 }
 
-#scores-page .session .data > div {font-weight: bold;}
+#scores-page .session .data > div {
+    font-weight: bold;
+    text-align: center;
+}
+
 #scores-page .session .data > div:before {font-weight: normal;}
 
-#scores-page .session .data > div:nth-of-type(1):before {content: 'lp: '}
+#scores-page .session .data > div:nth-of-type(1):before {content: 'No.: '}
 #scores-page .session .data > div:nth-of-type(2):before {content: 'date: '}
 #scores-page .session .data > div:nth-of-type(3):before {content: 'start time: '}
 #scores-page .session .data > div:nth-of-type(4):before {content: 'stop time: '}
@@ -62,6 +65,19 @@ header .exit:hover {transform: scale(1.2);}
 #scores-page .session .data > div:nth-of-type(7):before {content: 'total coins: '}
 #scores-page .session .data > div:nth-of-type(8):before {content: 'total win: '}
 #scores-page .session .data > div:nth-of-type(9):before {content: 'spins: '}
+
+#scores-page .session .data button {
+    padding: 8px 0;
+    margin: -8px 0;
+    border: 1px solid #a7a7a7;
+    border-radius: 5px;
+    transition: .12s ease;
+}
+
+#scores-page .session .data button:active,
+#scores-page .session .data button:hover {
+    background-color: #cfcfcf;
+}
 
 
 /* GRAPH */
@@ -79,10 +95,96 @@ header .exit:hover {transform: scale(1.2);}
 
 #scores-page .session .graph-container canvas {
     background-color: #fff;
+    border: 1px solid #cfcfcf;
+    max-width: 100%;
+    border-radius: 5px;
 }
+
+
+
 
 @media (max-width: 768px) {
 
+    #scores-page .session {
+        margin: 0 2px;
+        overflow: unset;
+    }
 
+    #scores-page .session .data {
+        grid-template-columns: repeat(4, 1fr);
+        row-gap: 15px;
+        column-gap: 5px;
+    }
+
+    #scores-page .session .data > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #a7a7a7;
+        border-radius: 5px;
+        background-color: #cfcfcf;
+    }
+    
+    #scores-page .session .data button {
+        padding: 0 0;
+        margin: 0 0;
+    }
+
+    #scores-page .session .data button:hover {
+        background-color: #fff;
+    }
+
+
+    /* graph */
+    #scores-page .session.open .graph-container {
+        width: 150%;
+    }
+}
+
+@media (max-width: 576px) {
+
+    body {
+        font-size: 12px;
+    }
+
+    header {
+        height: 40px;
+        justify-content: flex-end;
+    }
+
+    #scores-page .session {
+        padding: 0;
+        margin: 3px 3px 5px;
+    }
+    
+    #scores-page .session .data {
+        padding: 2px;
+        grid-template-columns: repeat(3, 1fr);
+        row-gap: 5px;
+        column-gap: 5px;
+    }
+    
+    #scores-page .session.open .data {
+        padding-bottom: 5px;
+    }
+
+    #scores-page .session .data > div:nth-of-type(1) {
+        grid-column-start: 1;
+        grid-column-end: 3;
+        flex-direction: row;
+    }
+
+    #scores-page .session .data button {
+        padding: 10px 0;
+    }
+
+    /* graph */
+    #scores-page .session.open .graph-container {
+        width: 250%;
+        height: 380px;
+    }
+
+    
 }
 

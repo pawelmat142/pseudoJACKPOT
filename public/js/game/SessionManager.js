@@ -53,5 +53,11 @@ export class SessionManager {
             else this.sessions = [...this.sessions, id]
         } else this.sessions = [id]
     }
+    
+    
+    removeFromSessions = (id) => {
+        const result = Array.isArray(this.sessions) ? this.sessions.filter(s=>s!==id) : this.sessions
+        this.sessions = result
+    }
 
 } 
