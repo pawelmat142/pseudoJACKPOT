@@ -116,8 +116,6 @@ body p {
     height: unset !important;
 }
 
-
-
 #scores-page .session.open .graph-container canvas.full-screen {
     position: fixed;
     top: 0;
@@ -129,7 +127,9 @@ body p {
 #scores-page .session.open .graph-container canvas.full-screen.vertical {
     width: 100vh;
     height: 100vw !important;
-    transform: rotate(90deg) translate(22%, 39%);
+    /* transform: rotate(90deg) translate(22%, 39%); */
+    transform: rotate(90deg) translateY(-100%);
+    transform-origin: top left;
 }
 
 #scores-page .session.open .graph-container canvas.full-screen.horizontal {
