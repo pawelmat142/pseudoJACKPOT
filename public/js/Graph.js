@@ -11,6 +11,7 @@ export class Graph {
         this.curves = []
         this.legends = []
         this.iterator = 0
+        this.fullScreen = false
 
         // grid
         this.gridOnY = config.gridOnY || false
@@ -20,7 +21,7 @@ export class Graph {
         this.gridWidth =  config.gridWidth || 1
         this.gridDashed = config.gridDashed || 15
         this.gridColor = config.gridColor || '#c8c8c8'
-        this.gridNumbersFont = config.gridNumbersFont || screen.width > 576 ? '17px Arial' : '12px Arial'
+        this.gridNumbersFont = config.gridNumbersFont || mobile() ? '12px Arial' : '17px Arial' 
 
         this.legendHeight = mobile() ? 30 : 50
         this.offsetTop = mobile() ? 10 : 15 
@@ -32,6 +33,7 @@ export class Graph {
 
         window.addEventListener('resize', this.resize)
         window.addEventListener('orientationchange', this.resize)
+        this.canvas.addEventListener('click', this.onClick)
         this.resize()
 
     }
@@ -190,19 +192,28 @@ export class Graph {
         })
     }
 
-
-
-    orientationchange = () => {
-        this.resize()
-        if (screen.height > screen.width) {
-            console.log('to vertical')
-            
-        }
-        else {
-            console.log('to horizontal')
+    onClick = () => {
+        if (mobile()) {
+            if (this.canvas.classList.contains('full-screen')) {
+                this.canvas.classList.remove('full-screen')
+                this.canvas.classList.remove('vertical')
+                this.canvas.classList.remove('horizontal')
+            } else {
+                this.canvas.classList.add('full-screen')
+                if (screen.height > screen.width)this.canvas.classList.add('vertical')
+                else this.canvas.classList.add('horizontal')
+            }
         }
     }
-
+    
+    orientationchange = () => {
+        if (this.canvas.classList.contains('full-screen')) {
+            this.canvas.classList.toggle('vertical')
+            this.canvas.classList.toggle('horizontal')
+            console.log('orient full screen')
+        } else this.resize()
+    }
+    
 }
 
 

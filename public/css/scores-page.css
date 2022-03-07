@@ -113,9 +113,30 @@ body p {
 }
 
 #scores-page .session.open .graph-container canvas {
-    margin-right: 10px;
     height: unset !important;
 }
+
+
+
+#scores-page .session.open .graph-container canvas.full-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    max-width: unset;
+    max-height: unset;
+}
+
+#scores-page .session.open .graph-container canvas.full-screen.vertical {
+    width: 100vh;
+    height: 100vw !important;
+    transform: rotate(90deg) translate(22%, 39%);
+}
+
+#scores-page .session.open .graph-container canvas.full-screen.horizontal {
+    width: 100vw;
+    height: 100vh !important;
+}
+
 
 
 
@@ -158,9 +179,9 @@ body p {
 
     /* graph */
     #scores-page .session.open .graph-container {
-        height: 100vh;
-        width: 150%;
+        height: 400px;
     }
+
 }
 
 @media (max-width: 576px) {
@@ -186,7 +207,7 @@ body p {
     }
 
     #scores-page .session .data {
-        padding: 2px;
+        padding: 5px;
         grid-template-columns: repeat(3, 1fr);
         row-gap: 5px;
         column-gap: 5px;
@@ -208,10 +229,18 @@ body p {
 
     /* graph */
     #scores-page .session.open .graph-container {
-        width: 200%;
-        height: 50vh;
+        width: 100%;
+        height: 250px;
     }
 
     
+}
+
+.full-screen {
+    position: fixed;
+    width: 100vw;
+    height: 100vh !important;
+    top: 0;
+    left: 0;
 }
 
