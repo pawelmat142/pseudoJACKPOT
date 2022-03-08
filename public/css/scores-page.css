@@ -137,9 +137,6 @@ body p {
     height: 100vh !important;
 }
 
-
-
-
 @media (max-width: 768px) {
 
     #scores-page .session {
@@ -236,11 +233,5 @@ body p {
     
 }
 
-.full-screen {
-    position: fixed;
-    width: 100vw;
-    height: 100vh !important;
-    top: 0;
-    left: 0;
-}
+
 

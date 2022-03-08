@@ -116,26 +116,28 @@ export class GameColumn {
             const delta = (this.maxInterval - interval) / 100 * this.step
             let stopFlag = false
     
-            const colNewState = this.state
+            let colNewState = this.state
     
             const frame = () => {
-                if (offset >= (100/this.rows-2)) {
+                if (offset > (100/(this.rows+1)-this.step+1)) {
+                    if (!!colNewState.length) this.rollTriggerStop(colNewState.pop())
                     if (stopFlag) {
+                        column.style.transform = `translateY(${100/(this.rows+1)}%)`
                         this.isRolling = false
                         this.stopFlag = false
                         this.audio.colsStop.play()
                         resolve()
                         return 0
                     }
-                    if (colNewState.length) this.rollTriggerStop(colNewState.pop())
                     offset = 0
                 }
                 if (interval >= this.stopInterval) stopFlag = true
+                column.style.transform = `translateY(${offset}%)`
                 interval += delta
                 offset += this.step
-                column.style.transform = `translateY(${offset}%)`
                 setTimeout(frame, interval)
             }
+
             setTimeout(frame, interval)
         })
     }

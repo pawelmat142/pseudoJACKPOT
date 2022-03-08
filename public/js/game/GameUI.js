@@ -44,6 +44,11 @@ export class GameUI {
     // INIT
 
     constrolsInit = () => {
+        document.getElementById('spin').addEventListener('click', this.onSpin)
+        document.getElementById('autoplay').addEventListener('click', this.onAutoplay)
+        document.getElementById('reset').addEventListener('click', this.onReset)
+        document.getElementById('scores').addEventListener('click', this.onScores)
+        this.board.board.addEventListener('click', this.onSpin)
         if (Array.isArray(config.DOMids.controls)) 
             config.DOMids.controls.forEach(item => {
                 document.getElementById(item.id)

@@ -12,50 +12,8 @@
 
     "coins": "coins",
     "bet": "bet",
-    "win": "win",
+    "win": "win"
 
-    "controls" : [
-      {
-        "id": "betUp",
-        "name": "BET UP"
-      },
-      {
-        "id": "betDown",
-        "name": "BET DOWN"
-      },
-      {
-        "id": "transfer",
-        "name": "TRANSFER"
-      },
-      {
-        "id": "reset",
-        "name": "RESET"
-      },
-      {
-        "id": "plus",
-        "name": "plus"
-      },
-      {
-        "id": "mute",
-        "name": "mute"
-      },
-      {
-        "id": "minus",
-        "name": "minus"
-      },
-      {
-        "id": "scores",
-        "name": "scores"
-      },
-      {
-        "id": "autoplay",
-        "name": "AUTO"
-      },
-      {
-        "id": "spin",
-        "name": "!SPIN!"
-      }
-    ]
 
   },
 
@@ -65,7 +23,7 @@
     "minInterval": 0.1,
     "maxInterval": 8,    
     "stopInterval": 12,   
-    "step": 4,            
+    "step": 3,            
 
     "stopDelay": 200,     
     "startDelay": 50  
