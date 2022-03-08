@@ -1,0 +1,50 @@
+@font-face {
+    font-family: "flaticon";
+    src: url("./flaticon.ttf?1a4a310dcee974446313293110c876b3") format("truetype"),
+url("./flaticon.woff?1a4a310dcee974446313293110c876b3") format("woff"),
+url("./flaticon.woff2?1a4a310dcee974446313293110c876b3") format("woff2"),
+url("./flaticon.eot?1a4a310dcee974446313293110c876b3#iefix") format("embedded-opentype"),
+url("./flaticon.svg?1a4a310dcee974446313293110c876b3#flaticon") format("svg");
+}
+
+i[class^="flaticon-"]:before, i[class*=" flaticon-"]:before {
+    font-family: flaticon !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.flaticon-plus:before {
+    content: "\f101";
+}
+.flaticon-minus:before {
+    content: "\f102";
+}
+.flaticon-money:before {
+    content: "\f103";
+}
+.flaticon-jackpot:before {
+    content: "\f104";
+}
+.flaticon-cherry:before {
+    content: "\f105";
+}
+.flaticon-jackpot-1:before {
+    content: "\f106";
+}
+.flaticon-jackpot-2:before {
+    content: "\f107";
+}
+.flaticon-gambling-chips-variant:before {
+    content: "\f108";
+}
+.flaticon-medium-volume:before {
+    content: "\f109";
+}
+.flaticon-volume:before {
+    content: "\f10a";
+}
