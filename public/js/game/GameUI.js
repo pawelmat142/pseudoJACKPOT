@@ -44,16 +44,14 @@ export class GameUI {
     // INIT
 
     constrolsInit = () => {
+        this.board.board.addEventListener('click', this.onSpin)
+
         document.getElementById('spin').addEventListener('click', this.onSpin)
         document.getElementById('autoplay').addEventListener('click', this.onAutoplay)
         document.getElementById('reset').addEventListener('click', this.onReset)
         document.getElementById('scores').addEventListener('click', this.onScores)
-        this.board.board.addEventListener('click', this.onSpin)
-        if (Array.isArray(config.DOMids.controls)) 
-            config.DOMids.controls.forEach(item => {
-                document.getElementById(item.id)
-                .addEventListener('click', (event) => eval(`this.on${item.id.capitalize()}(event)`))
-            })
+        document.getElementById('betUp').addEventListener('click', this.onBetUp)
+        document.getElementById('betDown').addEventListener('click', this.onBetDown)
 
         window.addEventListener('keydown', (event) => { if (event.key === ' ') this.onSpin() })
     }

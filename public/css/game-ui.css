@@ -243,13 +243,14 @@
     }
     #game-ui .display > div p {
         font-size: 20px;
+        padding: 10px 10px;
     }
 
     .btn span {
-        width: 60px;
-        height: 50px;
+        width: 67px;
+        height: 60px;
         word-break: break-word;
-        font-size: 14px;
+        font-size: 16px;
         text-align: center;
     }
 
