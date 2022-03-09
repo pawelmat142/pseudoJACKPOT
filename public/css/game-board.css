@@ -252,10 +252,10 @@ body {
 
 @media (max-width: 768px) {
     :root {
-        --pading-top: 3px;
+        --pading-top: 1vw;
         --board: 90vw;
-        --item: 15vw;
-        --row-gap: 5vw;
-        --col-gap: 14vw;
+        --item: 17vw;
+        --row-gap: 4vw;
+        --col-gap: 13vw;
     }
 }
