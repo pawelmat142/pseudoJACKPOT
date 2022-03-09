@@ -1,7 +1,8 @@
 :root {
-    --item: 120px;
-    --padding: 18px;
-    --col-gap: 40px;
+    --item: 110px;
+    --field-height: 150px;
+    --field-width: 198px;
+    --col-gap: 0;
 }
 
 body {
@@ -22,40 +23,49 @@ body {
     margin-top: 50px;
     position: relative;
     gap: var(--col-gap);
-    transform: perspective(230px) rotateX(-1deg);
+    background-image: url(../img/board-bg.png);
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+    /* transform: perspective(230px) rotateX(-1deg); */
+}
+
+#game-board:after {
+    /* content: ''; */
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: url(../img/board-frame.png);
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 
 #game-board .column-wrapper {
-    padding-top: var(--padding);
-    height: calc( calc(var(--item)*3) + calc(var(--padding)*8));
+    height: calc(var(--field-height)*3) ; 
     overflow: hidden;
-    border: 2px solid #686868;
-    border-radius: 20px;
-    background-color: #aeaeae;
-    box-shadow: 
-    rgb(50 50 93 / 25%) 0px 17px 16px 10px inset, 
-    rgb(0 0 0 / 30%) 0px 18px 36px -18px inset;
     position: relative;
 }
 
-
 #game-board .column-wrapper .column {
-    display: flex;
-    flex-direction: column;
+    /* display: flex; */
+    /* flex-direction: column; */
 }
 
 #game-board .column .item-wrapper {
-    padding: var(--padding) calc(var(--padding) * 2);
-    text-align: center;
-    transform: translateY(-100%);
+    width: var(--field-width);
+    height: var(--field-height);
     display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-100%);
 }
 
 #game-board .column .item-wrapper img {
     width: var(--item);
     height: var(--item);
-    max-height: 100%;
-    border-radius: 50%;
     transition: .15s ease;
     border-width: 0;
     border-style: solid;
@@ -222,8 +232,8 @@ body {
 @media (max-width: 1200px) {
     :root {
         --item: 100px;
-        --padding: 15px;
-        --col-gap: 35px;
+        --field-height: 143px;
+        --field-width: 190px;
     }
     
 }
@@ -231,10 +241,10 @@ body {
 @media (max-width: 768px) {
     :root {
         --item: 14vw;
-        --padding: 1.5vw;
-        --col-gap: 15px;
+        --field-height: 132px;
+        --field-width: 175px;
     }
-
+    
     #game-board {
         margin-top: 20px;
     }
@@ -243,8 +253,8 @@ body {
 @media (max-width: 576px) {
     :root {
         --item: 19vw;
-        --padding: 2vw;
-        --col-gap: 10px;
+        --field-height: 105px;
+        --field-width: 139px;
     }
     
 }

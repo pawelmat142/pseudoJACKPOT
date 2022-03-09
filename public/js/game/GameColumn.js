@@ -49,7 +49,6 @@ export class GameColumn {
         const start =  await this.startRoll()
         const constStart = await this.constRoll(start)
         await this.stopRoll(constStart)
-        return 'a'
     }
 
 
@@ -119,7 +118,7 @@ export class GameColumn {
             let colNewState = this.state
     
             const frame = () => {
-                if (offset > (100/(this.rows+1)-this.step+1)) {
+                if (offset >= 100/(this.rows+1)) {
                     if (!!colNewState.length) this.rollTriggerStop(colNewState.pop())
                     if (stopFlag) {
                         column.style.transform = `translateY(${100/(this.rows+1)}%)`
