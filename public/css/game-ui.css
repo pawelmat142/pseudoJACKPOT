@@ -1,10 +1,6 @@
 /* UI */
 #game-ui {
-    width: calc( 
-        calc(var(--item)*3) + 
-        calc(var(--padding)*12) + 
-        calc(var(--col-gap)*2) 
-    );
+    width: calc(var(--field-width)*3);
 }
 
 /* display */
@@ -201,7 +197,6 @@
 #transfer {
     display: none;
 }
-
 
 .btn.green {
     background-color: #248c4c;

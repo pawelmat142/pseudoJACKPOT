@@ -240,9 +240,9 @@ body {
 
 @media (max-width: 768px) {
     :root {
-        --item: 14vw;
-        --field-height: 132px;
-        --field-width: 175px;
+        --item: 15vw;
+        --field-width: 31vw;
+        --field-height: 23vw;
     }
     
     #game-board {
@@ -251,10 +251,10 @@ body {
 }
 
 @media (max-width: 576px) {
-    :root {
-        --item: 19vw;
-        --field-height: 105px;
-        --field-width: 139px;
-    }
+    /* :root {
+        --item: 15vw;
+        --field-width: 31vw;
+        --field-height: 23vw;
+    } */
     
 }
