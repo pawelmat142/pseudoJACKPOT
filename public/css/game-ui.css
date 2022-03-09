@@ -162,6 +162,7 @@
     transition: .1s ease;
     cursor: pointer;
     position: relative;
+    padding-bottom: 12%;
 }
 
 .btn span:before {
@@ -191,6 +192,9 @@
     -moz-background-clip: text;
     background-clip: text;
     transform: rotateX(29deg);
+    max-width: 80%;
+    word-break: break-word;
+    text-align: center;
 }
 
 #spin span p { font-size: 30px;}

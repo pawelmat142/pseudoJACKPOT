@@ -54,6 +54,8 @@ body {
     height: calc( calc(var(--item)*3) + calc(var(--row-gap)*4) )
 }
 
+#game-board .column-wrapper:hover { cursor: pointer; }
+
 #game-board .column-wrapper .column {
     display: flex;
     flex-direction: column;

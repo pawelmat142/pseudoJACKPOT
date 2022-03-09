@@ -145,12 +145,6 @@ export class GameUI {
         } else this.audio.clickFail.play() 
     }
     
-    
-    onPlus = () => this.audioManager.volumeUp()
-
-    onMute = (event) => this.audioManager.mute(event)
-
-    onMinus = () => this.audioManager.volumeDown()
 
     onScores = async () => window.location.href = 'scores-page'
 
