@@ -1,6 +1,7 @@
 /* UI */
 #game-ui {
-    width: calc(var(--field-width)*3);
+    width: var(--board);
+    padding: 0 var(--item);
 }
 
 /* display */
@@ -232,6 +233,13 @@
 }
 
 
+
+
+@media (max-width: 1200px) {
+    #game-ui {
+        padding: 0;
+    }
+}
 
 
 @media (max-width: 768px) {

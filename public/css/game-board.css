@@ -1,8 +1,9 @@
 :root {
+    --pading-top: 15px;
+    --board: 800px;
     --item: 110px;
-    --field-height: 150px;
-    --field-width: 198px;
-    --col-gap: 0;
+    --row-gap: 37px;
+    --col-gap: 107px;
 }
 
 body {
@@ -19,14 +20,17 @@ body {
 }
 
 #game-board {
-    display: flex;
-    margin-top: 50px;
     position: relative;
-    gap: var(--col-gap);
+    width: var(--board);
+    margin-top: 50px;
     background-image: url(../img/board-bg.png);
     background-size: contain;
     background-position: center center;
     background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    gap: var(--col-gap);
+    padding-top: var(--pading-top);
     /* transform: perspective(230px) rotateX(-1deg); */
 }
 
@@ -44,19 +48,18 @@ body {
 }
 
 #game-board .column-wrapper {
-    height: calc(var(--field-height)*3) ; 
     overflow: hidden;
     position: relative;
+    height: calc( calc(var(--item)*3) + calc(var(--row-gap)*4) )
 }
 
 #game-board .column-wrapper .column {
-    /* display: flex; */
-    /* flex-direction: column; */
+    display: flex;
+    flex-direction: column;
+    gap: var(--row-gap);
 }
 
 #game-board .column .item-wrapper {
-    width: var(--field-width);
-    height: var(--field-height);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -225,36 +228,34 @@ body {
 
 
 
-
-
-
-
 @media (max-width: 1200px) {
     :root {
-        --item: 100px;
-        --field-height: 143px;
-        --field-width: 190px;
+        --pading-top: 20px;
+        --board: 600px;
+        --item: 95px;
+        --row-gap: 39px;
+        --col-gap: 103px;
     }
-    
 }
 
 @media (max-width: 768px) {
     :root {
-        --item: 15vw;
-        --field-width: 31vw;
-        --field-height: 23vw;
+        --pading-top: 10px;
+        --board: 450px;
+        --item: 74px;
+        --row-gap: 28px;
+        --col-gap: 75px;
     }
-    
-    #game-board {
-        margin-top: 20px;
-    }
+
+    .xxx {display: none;} 
 }
 
-@media (max-width: 576px) {
-    /* :root {
+@media (max-width: 768px) {
+    :root {
+        --pading-top: 3px;
+        --board: 90vw;
         --item: 15vw;
-        --field-width: 31vw;
-        --field-height: 23vw;
-    } */
-    
+        --row-gap: 5vw;
+        --col-gap: 14vw;
+    }
 }
