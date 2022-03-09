@@ -10,11 +10,12 @@ module.exports = async () => {
     let result = false
 
     const sessionId = await knex('sessions').insert(newSession)
+
     
-    if (sessionId) result = sessionId.pop()
-
+    if (!!sessionId && Array.isArray(sessionId)) result = sessionId.pop()
+    
     knex.destroy()
-
+    
     return result
 }
 

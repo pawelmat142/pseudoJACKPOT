@@ -15,19 +15,28 @@ exports.newSession = async (req, res, next) => {
 
 exports.getSession = async (req, res, next) => {
     try {
-        const sessionId = req.params.sessionId
-        if (await query.hasSession(sessionId)) {
+        const sessionId = parseInt(req.params.sessionId)
+        if (sessionId >= 0 && await query.hasSession(sessionId)) {
             let session = await query.getSessionById(sessionId)
             const lastSpin = await query.getLastSpinBySessionId(sessionId)
-            if (lastSpin) {
+            if (!!lastSpin) {
                 const minutesAgo = parseInt( ( Date.now() - new Date(lastSpin.time).getTime() ) / 1000 / 60 )
-                if (minutesAgo > 10) session = newSession()
+                if (minutesAgo > 10) session = await newSession()
             }
             res.json(session)
         } else res.json(await newSession())
     } catch (error) { next(error) }
 }
 
+
+const newSession = async () => {
+    const sessionId = await query.newSession()
+    if (!!sessionId) {
+        const session = await query.getSessionById(sessionId)
+        if (!!session) return session
+        else throw new Error('db response error')
+    } else throw new Error('new session error')
+}
 
 
 exports.getSessions = async (req, res, next) => {
@@ -36,14 +45,6 @@ exports.getSessions = async (req, res, next) => {
         const promises = sessionsIds.map(async id => query.getSessionById(id))
         res.json(await Promise.all(promises))
     } catch (error) { next(error) }
-}
-
-
-
-const newSession = async () => {
-    const newSessionId = await query.newSessionId()
-    if (newSessionId) return await query.getSessionById(newSessionId)
-    else throw new Error('new session error')
 }
 
 
@@ -155,36 +156,4 @@ exports.spin = async (req, res, next) => {
             }
         } else throw new Error('db response error')
     } catch (error) { next(error) }
-}
-
-
-
-// TEST
-
-exports.test = async (req, res) => {
-    console.log('test')
-    const a = await countSpins()
-    console.log(`There are ${a} items`)
-    res.json('test')
-}
-
-
-let scoreSum = 0
-let shotCounter = 0
-let totalScore = 0
-exports.testing = (req, res) => {
-    const testOnce = () => {
-        const shot = scoreGenerator.getShot()
-        const score = scoreGenerator.getScore(shot)
-        scoreSum += score
-        shotCounter++
-        totalScore += score
-        totalScore--
-        console.log(`shot: ${shot}, score: ${score}`)
-        console.log(`shotCounter: ${shotCounter}, totalScore: ${totalScore}, scoreSum: ${scoreSum}`)
-    }
-    for(let i = 0; i < 100000; i++) {
-        testOnce()
-    }
-    res.json({testing: "testing"})
 }

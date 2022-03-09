@@ -1,7 +1,7 @@
 class Query {
     constructor() {
         this.addSpin = require('./addSpin')
-        this.newSessionId = require('./newSessionId')
+        this.newSession = require('./newSession')
         this.getSessionById = require('./getSessionById')
         this.stopSessionById = require('./stopSessionById')
         this.updateCoinsBySessionId = require('./updateCoinsBySessionId')

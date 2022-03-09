@@ -4,24 +4,19 @@ export class HttpClient {
 
         this.url = '/'
 
-        this._sessionId = 0
+        this._sessionId = -1
 
     }
 
-    get sessionId() {
-        return this._sessionId
-    }
+    get sessionId() { return this._sessionId }
 
-    set sessionId(id) {
-        this._sessionId = id
-    }
-
+    set sessionId(id) { this._sessionId = id }
 
     // SESSION
 
-    newSession = async () => {
-        return await get(`${this.url}session`)
-    }
+    // newSession = async () => {
+    //     return await get(`${this.url}session`)
+    // }
 
 
     getSessionData = async (_id) => {
