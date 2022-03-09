@@ -53,8 +53,7 @@ export class GameBoard {
 
 
     
-
-
+    // HIGHLIGHTs
 
     highlightScore = async () => {
         const scoreLines = getScoreLines(this.currentState)
@@ -87,13 +86,13 @@ export class GameBoard {
         if (Array.from(line).shift() === 'r') {
             const rowIndex = parseInt(Array.from(line).pop())
             this.columns.forEach(col => col.highLight([rowIndex]))
-            this.highlight(rowIndex, this.currentState[0][rowIndex])
+            // this.highlight(rowIndex, this.currentState[0][rowIndex])
             return rowIndex
         }
         if (Array.from(line).shift() === 'x') {
             const index = parseInt(Array.from(line).pop())
             this.columns.forEach((col, ind) => col.highLight([Math.abs(index - ind)]))
-            this.highlight(index, this.currentState[0][index], 'x')
+            // this.highlight(index, this.currentState[0][index], 'x')
             return index
         }
     }

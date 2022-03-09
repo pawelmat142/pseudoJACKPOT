@@ -55,7 +55,7 @@ export class GameUI {
         
         document.getElementById('spin').addEventListener('click', this.onSpin)
         this.board.board.addEventListener('click', this.onSpin)
-        window.addEventListener('keydown', (event) => event.key === ' ' ? this.onSpin():{})
+        window.addEventListener('keydown', (event) => event.key === ' ' ? this.onSpace():{})
     }
 
 
@@ -153,6 +153,12 @@ export class GameUI {
     onMinus = () => this.audioManager.volumeDown()
 
     onScores = async () => window.location.href = 'scores-page'
+
+
+    onSpace = () => {
+        if (this.autoplayButton.classList.contains('active')) this.onAutoplay()
+        else this.onSpin()
+    }
 
     // xx
 

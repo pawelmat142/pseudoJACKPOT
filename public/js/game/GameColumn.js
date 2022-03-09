@@ -169,8 +169,8 @@ export class GameColumn {
         if (Array.isArray(indexes)) {
             const elements = this.column.querySelectorAll('.item-wrapper')
             indexes.forEach(i => {
-                elements[i].classList.add('high-light')
-                setTimeout(() => elements[i].classList.remove('high-light'), this.highLightTime)
+                elements[i].classList.add('highlight')
+                setTimeout(() => elements[i].classList.remove('highlight'), this.highLightTime)
             })
         }
     }
