@@ -31,9 +31,9 @@
   
   
   "spin": {
-    "spinTime": 300,   
-    "highLightTime": 280,
-    "highLightInterval": 320
+    "spinTime": 500,   
+    "highLightTime": 330,
+    "highLightInterval": 350
   },
 
 

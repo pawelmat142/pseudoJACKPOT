@@ -33,13 +33,16 @@ export class GameUI {
     }
 
 
+
     set autoplay(input) {
         this._autoplay = input
         if (this._autoplay) this.autoplayButton.classList.add('active')
         else this.autoplayButton.classList.remove('active')
     }
 
+
     get autoplay() { return this._autoplay }
+
 
 
     // INIT
@@ -60,6 +63,7 @@ export class GameUI {
     }
 
 
+
     setDisplayState = (state) => {
         this.coins.set(state.coins)
         this.bet.set(state.bet)
@@ -67,6 +71,7 @@ export class GameUI {
         this.board.bet = state.bet
         this.board.spinFlag = true
     }
+
 
 
     // BUTTONS
@@ -81,6 +86,7 @@ export class GameUI {
     }
     
     
+
     onBetDown = async () => {
         const newBet = await this.http.betDown()
         if (newBet !== this.bet.get()) {
@@ -91,6 +97,7 @@ export class GameUI {
     }
     
 
+
     onReset = async () => {
         if (this.board.spinFlag) {
             this.board.spinFlag = false
@@ -99,6 +106,7 @@ export class GameUI {
             this.setDisplayState(sessionData)
         } else this.audio.clickFail.play()
     }
+
 
 
     onScores = async () => window.location.href = 'scores-page'
@@ -113,12 +121,7 @@ export class GameUI {
     }
     
 
-
-    // SPIN ACTIONS
-
-    onSpace = () => this.autoplayButton.classList.contains('active') ? this.onAutoplay() : this.onSpin()
-
-
+    
     onSpin = async () => {
         if (this.board.spinFlag) {
             let spinPromises = this.spinStart()
@@ -133,6 +136,13 @@ export class GameUI {
             }
         } else this.audio.clickFail.play() 
     }
+
+
+
+    // SPIN ACTIONS
+
+    onSpace = () => this.autoplayButton.classList.contains('active') ? this.onAutoplay() : this.onSpin()
+
 
 
     spinStart = () => {
@@ -174,6 +184,7 @@ export class GameUI {
     }
 
 
+
     notEnoughCoins = () => {
         this.errorSpinStop()
         this.coins.active()
@@ -184,12 +195,15 @@ export class GameUI {
     }
 
 
+
     topSceenShow = (_value) => {
         const value = parseInt(this.topScreen.get()) +  _value * this.bet.get()
         this.topScreen.set(value)
         this.topScreen.active()
         this.topScreen.deactive()
     }
+
+
 
 
     // transfer actions
@@ -202,6 +216,7 @@ export class GameUI {
     }
 
 
+
     transferModalInput = () => {
         const input = document.createElement('input')
         input.classList.add('transfer-input')
@@ -211,6 +226,7 @@ export class GameUI {
         input.addEventListener('input', (event) => this.onInputTransfer(event, input))
         return input
     }
+
 
 
     transferAction = async (e) => {
@@ -226,11 +242,11 @@ export class GameUI {
     }
 
 
+
     onInputTransfer = (e, input) => {
         if (input.value > this.win.get()) input.value = this.win.get()
         if (input.value < 0) input.value = 0
     }
-
 
 }
 

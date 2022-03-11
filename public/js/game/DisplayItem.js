@@ -29,7 +29,7 @@ export class DisplayItem {
                 if (to > from) this.set(this.get()+step)
                 if (to < from) this.set(this.get()-step)
                 if ((to - from) > 0 && this.get() >= to || (to - from) < 0 && this.get() <= to) {
-                    this.get() < 0 ? this.set(0) : {}
+                    this.set(_to)
                     this.audio.moneyTransfer.pause()
                     if (soundFlag) this.audio.money.play()
                     clearInterval(a)
@@ -40,12 +40,8 @@ export class DisplayItem {
         })
     }
 
-    active = () => {
-        this.DOM.classList.add("active")
-    }
-
-    deactive = () => {
-        setTimeout(()=> this.DOM.classList.remove("active"),100)
-    }
+    active = () => this.DOM.classList.add("active")
+    
+    deactive = () => setTimeout(() => this.DOM.classList.remove("active"), 100)
     
 }
