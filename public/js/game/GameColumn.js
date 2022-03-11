@@ -3,13 +3,13 @@ import config from '../../gameConfig.json' assert { type: "json" }
 
 export class GameColumn {
 
-    constructor(state, board, index, factory, audioManager) {
+    constructor(state, board, index, boardGenerator, audioManager) {
         
         this.board = board
         this.index = index
-        this.factory = factory
+        this.boardGenerator = boardGenerator
         this.audio = audioManager
-        this.state = appendRandomItem(state, this.factory)  // np: ['A', 'S', 'W']
+        this.state = appendRandomItem(state, this.boardGenerator)  // np: ['A', 'S', 'W']
 
         this.rows = config.board.rows
         this.cols = config.board.cols
@@ -43,19 +43,24 @@ export class GameColumn {
     setState = (state) => this.state = [...state]
 
 
+    // SPIN
 
-    spin = async () => {
+    spinStart = async () => {
         this.stopFlag = false
-        const start =  await this.startRoll()
-        const constStart = await this.constRoll(start)
-        await this.stopRoll(constStart)
+        await sleep(this.index * config.roll.startDelay)
+        const rollData =  await this.startRoll()
+        return this.constRoll(rollData)
     }
 
 
-    spinStop = () => {
+    spinStop = async (spinPromise) => {
+        await sleep(this.index*config.roll.stopDelay)
         this.stopFlag = true
+        return await this.stopRoll(await spinPromise)
     }
-    
+
+
+    // ROLLING ANIMATION
 
     startRoll() {
         return new Promise(resolve => {
@@ -71,9 +76,7 @@ export class GameColumn {
                     this.rollTrigger()
                     offset = 0
                 }
-                if (interval <= this.minInterval)
-                    resolve({"interval": interval, "offset": offset})
-                    // this.constRoll(interval, offset)
+                if (interval <= this.minInterval) resolve({"interval": interval, "offset": offset})
                 else setTimeout(frame, interval)
                 column.style.transform = `translateY(${offset}%)`
                 interval -= delta
@@ -95,9 +98,7 @@ export class GameColumn {
                     this.rollTrigger()
                     offset = 0
                 }
-                if (this.stopFlag) 
-                    resolve({"interval": interval, "offset": offset})
-                    // this.stopRoll(offset, interval)
+                if (this.stopFlag) resolve({"interval": interval, "offset": offset}) 
                 else setTimeout(frame, interval)
                 column.style.transform = `translateY(${offset}%)`
                 offset += this.step
@@ -136,7 +137,6 @@ export class GameColumn {
                 offset += this.step
                 setTimeout(frame, interval)
             }
-
             setTimeout(frame, interval)
         })
     }
@@ -145,7 +145,7 @@ export class GameColumn {
 
     rollTrigger = () => {
         const column = this.column
-        const img = this.itemsImages[getImgIndex(this.factory.getRandomItem())].cloneNode(true)
+        const img = this.itemsImages[getImgIndex(this.boardGenerator.getRandomItem())].cloneNode(true)
         const el = document.createElement('div')
         el.classList.add('item-wrapper')
         el.appendChild(img)
@@ -179,36 +179,20 @@ export class GameColumn {
 }
 
 
-const appendRandomItem = (state, factory) => {
-    state.unshift(factory.getRandomItem())
-    return state
-}
+const appendRandomItem = (state, boardGenerator) => [boardGenerator.getRandomItem(), ...state]
 
 
-const getImgElement = (item, itemsImages) => 
-    itemsImages[getImgIndex(item)].cloneNode(true)
+const getImgElement = (item, itemsImages) => itemsImages[getImgIndex(item)].cloneNode(true)
 
 
-const getImgIndex = (name) => {
-    let result = -1
-    config.availableItems.forEach((item, itemIndex) => {
-        if (item.name === name) {result = itemIndex}
+const getImgIndex = (_name) => config.availableItems.map(item => item.name).indexOf(_name)
+
+
+const loadImages = async () => Promise.all(config.availableItems.map(item => new Promise(resolve => {
+        const img = new Image()
+        img.src = item.src
+        img.onload = () => resolve(img)
     })
-    return result
-}
+))
 
-
-async function loadImages() {
-    const items = config.availableItems
-    let promises = items.map(item => {
-        return new Promise((resolve, reject) => {
-            const img = new Image()
-            img.src = item.src
-            img.onload = () => resolve(img)
-        })
-    })
-    return Promise.all(promises)
-}
-
-
-
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))

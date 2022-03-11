@@ -1,5 +1,5 @@
 import { HttpClient } from './HttpClient.js'
-import { StateFactory } from './game/StateFactory.js'
+import { BoardGenerator } from './game/BoardGenerator.js'
 import { GameBoard } from './game/GameBoard.js'
 import { GameUI } from './game/GameUI.js'
 import { AudioManager } from './AudioManager.js'
@@ -16,10 +16,10 @@ const session = new SessionManager(httpClient)
 
 
 // client side random items generator
-const stateFactory = new StateFactory()
+const boardGenerator = new BoardGenerator()
 
 // DOM operations - rolling board
-const gameBoard = new GameBoard(stateFactory, audioManager)
+const gameBoard = new GameBoard(boardGenerator, audioManager)
 
 
 // getting scores from server side and

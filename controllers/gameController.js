@@ -94,7 +94,6 @@ exports.betDown = async (req, res, next) => {
 // TRANSFER
 
 exports.transfer = async (req, res, next) => {
-    console.log('server - transfer')
     try {
         const transfer = parseInt(req.body.transfer)
         const sessionId = req.params.sessionId
@@ -104,8 +103,8 @@ exports.transfer = async (req, res, next) => {
                 let win = await query.updateWinBySessionId(sessionId, sessionData.win - transfer) 
                 let coins = await query.updateCoinsBySessionId(sessionId, sessionData.coins + transfer)
                 if (win && coins || parseInt(win) === 0) {
-
                     const spin = await query.addSpin(sessionId, transfer, -1)
+                    console.log(`session: ${sessionId} - transfering: ${transfer} coins`)
                     if (!!spin) res.json({
                         coins: coins,
                         bet: sessionData.bet,
@@ -124,13 +123,11 @@ exports.transfer = async (req, res, next) => {
 exports.spin = async (req, res, next) => {
     try {
         const score = scoreGenerator.getScore()
-        const board = scoreGenerator.getBoard(score)
         const sessionId = req.params.sessionId
         const sessionData = await query.getSessionById(sessionId)
         if (sessionData) {
             const bet = parseInt(sessionData.bet)
-            if (sessionData.coins < sessionData.bet) res.status(201).json({board: "not enough win"})
-            else {
+            if (!(sessionData.coins < sessionData.bet)){
                 const spin = await query.addSpin(sessionId, score, bet)
                 if (spin) {
                     const coins = await query.updateCoinsBySessionId(sessionId, parseInt(sessionData.coins - bet))
@@ -138,22 +135,16 @@ exports.spin = async (req, res, next) => {
                     if (coins && win || parseInt(win) === 0 || parseInt(coins) === 0) {
                         if (await query.stopSessionById(sessionId)) {
                             res.json({
-                                // board : [
-                                //     ['W','W','W'],
-                                //     ['W','W','W'],
-                                //     ['W','W','W']
-                                // ],
-                                board: board,
                                 coins: coins,
                                 bet: bet,
-                                win: win
+                                win: win,
+                                score: score
                             })
                             console.log(`session: ${sessionId}, score: ${score}, bet: ${bet} `)
-                            console.log(board)
                         } else throw new Error('db response error')
                     } else throw new Error('db response error')
                 } else throw new Error('db response error')
-            }
+            } else res.status(204).json({board: "not enough coins"})
         } else throw new Error('db response error')
     } catch (error) { next(error) }
 }

@@ -11,147 +11,17 @@ class ScoreGenerator {
 
         this.maxShot = this.maxScore * this.divider
 
-        this.possibleScores = []
-        scores.forEach(score => {
-            this.possibleScores.push(score.score)
-        })
+        this._scores = scores.map(el => el.score)
     }
-
-    
-
-    getBoard = (_score) => {
-        const score = _score
-        if (score > 0 ) {
-            const scoreCongifg = this.getRandomConfigByScore(score)
-            const board = getBoardByConfig(scoreCongifg)
-            return board
-        }
-        else return this.getZeroScoreBoard()
-    }
-
-
-
-    getRandomConfigByScore = (score) => {
-        const scoreIndex = this.possibleScores.indexOf(score)
-        const numberOfConfigs = scores[scoreIndex].configs.length
-        const configIndex = getRandomInt(0, numberOfConfigs-1)
-        return scores[scoreIndex].configs[configIndex]
-    }
-
-
-
-    getZeroScoreBoard = () => {
-        let board = getRandomBoard()
-        let flag = hasBoardObliqueLine(board) || hasBoardHorizontalLine(board)
-        while (flag){
-            board = getRandomBoard()
-            flag = hasBoardObliqueLine(board) || hasBoardHorizontalLine(board)
-        }
-        return board
-    }
-
 
 
     getScore = (_shot) => {
         const shot = _shot || this.getShot()
-        let result = -1
-        this.possibleScores.forEach((score, ind) => {
-            if (shot > (this.maxShot - (this.maxScore * this.chance / score)) ) {
-                result = ind
-            }
-        })
-        if (result >= 0 ) 
-            return this.possibleScores[result]
-        else 
-            return 0
+        let a = this._scores.filter(score => shot > (this.maxShot - (this.maxScore * this.chance / score)))
+        return !!a.length ? a.pop() : 0 
     }
-
 
     getShot = () => getRandomInt(1, this.maxShot)
-}
-
-
-const getRandomBoard = () => {
-    const rows = config.board.rows
-    const cols = config.board.cols
-    const items = []
-    config.availableItems.forEach(i => items.push(i.name))
-    const getRandomItem = () => items[getRandomInt(0, items.length-1)]
-
-    let result = []
-    for (let i = 0; i < rows; i++) {
-        let col = []
-        for (let j = 0; j < cols; j++) {
-            col.push(getRandomItem())
-        }
-        result.push(col)
-    }
-    return result
-}
-
-
-const getBoardByConfig = (scoreCongifg) => {
-    const itemsNotInConfig = getItemsNotInConfig(scoreCongifg)
-    let board = []
-    scoreCongifg.forEach((col, colIndex) => {
-        let boardCol = []
-        col.forEach((item, rowIndex) => {
-            if (item === '0') {
-                let newItem = itemsNotInConfig[getRandomInt(0, itemsNotInConfig.length-1)]
-                while (colIndex>0 && newItem === board[colIndex-1][rowIndex]) {
-                    newItem = itemsNotInConfig[getRandomInt(0, itemsNotInConfig.length-1)]
-                }
-                boardCol.push(newItem)
-            }
-            else boardCol.push(item)
-        })
-        board.push(boardCol)
-    })
-    return board
-}
-
-
-const hasBoardHorizontalLine = (board) => {
-    flag = false
-    for (let row = 0; row < board.length; row++) 
-        for (let col = 0; col < board[row].length; col++) 
-
-            if (col > 1 ) {
-                if ((board[row][col] === board[row][col-1]) &&
-                    (board[row][col] === board[row][col-2]) ) 
-                    flag = true
-            }
-    return flag
-}
-
-const hasBoardObliqueLine = (board) => {
-    flag = false
-    for (let row = 0; row < board.length; row++) 
-        for (let col = 0; col < board[row].length; col++) 
-
-            if (col > 1 && row > 1) {
-                if ((board[row][col] === board[row-1][col-1]) &&
-                    (board[row][col] === board[row-2][col-2]) ) 
-                    flag = true
-                
-                if (board[row][col-2] === board[row-1][col-1] && 
-                    board[row][col-2] === board[row-2][col]) 
-                    flag = true
-            }
-    return flag
-}
-
-
-const getItemsNotInConfig = (scoreCongifg) => {
-    const allItems = [] 
-    const existingItems = [] 
-    config.availableItems.forEach(item => allItems.push(item.name))
-
-    scoreCongifg.forEach(row => row.forEach(item => {
-            if (existingItems.indexOf(item) === -1 && item !== '0') 
-                existingItems.push(item)}))
-
-    return allItems.filter(item => existingItems.indexOf(item)<0)
 }
 
 

@@ -1,21 +1,20 @@
 import config from '../../gameConfig.json' assert { type: "json" }
 import { GameColumn } from "./GameColumn.js"
-// import { Observable } from 'rxjs'
 
 export class GameBoard {
 
-    constructor(stateFactory, audioManager) {
+    constructor(boardGenerator, audioManager) {
 
         this.board = document.getElementById(config.DOMids.board)
         this.rows = config.board.rows
         this.cols = config.board.cols
 
-        this.factory = stateFactory
-        this.currentState = this.factory.getRandomBoard()
+        this.boardGenerator = boardGenerator
+        this.currentState = this.boardGenerator.getZeroScoreBoard()
         this.audio = audioManager.it
 
         this.columns = this.currentState.map((columnState, colIndex) => 
-            new GameColumn(columnState, this.board, colIndex, this.factory, this.audio)
+            new GameColumn(columnState, this.board, colIndex, this.boardGenerator, this.audio)
         )
 
         this.spinFlag = false
@@ -24,33 +23,35 @@ export class GameBoard {
 
     get isRolling() {
         let flag = false
-        this.columns.forEach(col => {
-            if (col.isRolling) flag = true
-        })
+        this.columns.forEach(col =>  {if (col.isRolling) flag = true })
         return flag
     }
 
 
-    spin = async () => {
+    spinStart = ()=> {
         if (!this.isRolling) {
             this.spinFlag = false
-            let promises = this.columns.map(col => col.spin())
-            return Promise.all(promises)
-        } else console.log('is rolling: ' + this.isRolling)
+            return this.columns.map(async col => col.spinStart())
+        } else {
+            return this.columns.map( el=> ({"interval": 0, "offset": 0}) )
+        }
     }
 
 
-    stopSpin = () => this.columns.forEach((column, i) => {
-        if (!this.spinFlag) setTimeout(() => column.stopFlag = true, config.roll.stopDelay*i) 
-        else console.log('is rolling: ' + this.isRolling)
-    })
+    spinStop = async (spinPromises) => {
+        if (!this.spinFlag) {
+            let stopPromises = this.columns.map( async(col, i)=> col.spinStop(spinPromises[i]))
+            return Promise.all(stopPromises)
+        }
+    }
     
 
-    setCurrentState = (state) => {
-        this.currentState = state
+    setCurrentState = (score) => {
+        const state = this.boardGenerator.getBoard(score)
+        this.currentState = [...state]
+        console.log(state)
         this.columns.forEach((col, i) => col.setState(this.currentState[i]))
     }
-
 
     
     // HIGHLIGHTs
@@ -136,8 +137,6 @@ export class GameBoard {
 
 
 
-
-
 const getScoreLines = (state) => {
     let lines = getHorizontalLines(state)
     return [...lines, ...getObliqueLines(state)]
@@ -170,7 +169,6 @@ const getObliqueLines = (board) => {
                 if ( !(rowIndex % 2) &&
                     board[colIndex][rowIndex] === board[colIndex-1][Math.abs(rowIndex-1)] && 
                     board[colIndex][rowIndex] === board[colIndex-2][Math.abs(rowIndex-2)] )
-
                     result.push('x'+Math.abs(rowIndex-2))
             }
 
@@ -179,3 +177,4 @@ const getObliqueLines = (board) => {
 
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+

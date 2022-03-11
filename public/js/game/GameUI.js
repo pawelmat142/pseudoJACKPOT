@@ -110,6 +110,14 @@ export class GameUI {
     }
 
 
+    onScores = async () => window.location.href = 'scores-page'
+
+
+    onSpace = () => {
+        if (this.autoplayButton.classList.contains('active')) this.onAutoplay()
+        else this.onSpin()
+    } 
+
 
     onAutoplay = async () => {
         this.autoplay = !this.autoplay
@@ -118,61 +126,71 @@ export class GameUI {
         } else break
     }
 
-    
 
     onSpin = async () => {
         if (this.board.spinFlag) {
-            this.spinButton.classList.add('active')
-            this.board.spinFlag = false
-            this.audio.spin.play()
-            this.audio.spinning.play()
+            let spinPromises = this.spinStart()
             try {
-                const spinResponse = await this.http.spin()
-                if (spinResponse === 201) {this.notEnoughCoins(); return 0 }
-                console.log(spinResponse)
-                this.board.setCurrentState(spinResponse.board)
-                if (spinResponse.coins !== this.coins.get()) this.coins.animateTo(spinResponse.coins, config.ui.transferTime, false)
-                setTimeout(() => this.board.stopSpin(), config.spin.spinTime)
-                await this.board.spin()
-                this.audio.spinning.pause()
-                this.audio.spinning.load()
-                await this.board.highlightScore()
-                if (spinResponse.win > this.win.get()) await this.win.animateTo(spinResponse.win, config.ui.transferTime, true)
-                this.board.spinFlag = true
-                this.spinButton.classList.remove('active')
+                let spinResponse = await this.http.spin()
+                if (spinResponse === 204) this.notEnoughCoins()
+                else await this.spinStop(spinPromises, spinResponse) 
                 return true
-            } catch (error) { console.log(error) }
+            } catch (error) {
+                this.errorSpinStop()
+                console.log(error)
+            }
         } else this.audio.clickFail.play() 
     }
+
+    // SPIN ACTIONS
+
+    spinStart = () => {
+        this.audio.spin.play()
+        this.audio.spinning.play()
+        this.spinButton.classList.add('active') 
+        this.board.spinFlag = false
+        return this.board.spinStart()
+    }
     
-
-    onScores = async () => window.location.href = 'scores-page'
-
-
-    onSpace = () => {
-        if (this.autoplayButton.classList.contains('active')) this.onAutoplay()
-        else this.onSpin()
+    spinStop = async (spinPromises, spinResponse) => {
+        this.board.setCurrentState(spinResponse.score)
+        if (spinResponse.coins !== this.coins.get()) this.coins.animateTo(spinResponse.coins, config.ui.transferTime, false)
+        await sleep(config.spin.spinTime)
+        // if (!!spinPromises) await this.board.spinStop(spinPromises)
+        await this.board.spinStop(spinPromises)
+        this.audio.spinning.pause()
+        this.audio.spinning.load()
+        await this.board.highlightScore()
+        if (spinResponse.win > this.win.get()) await this.win.animateTo(spinResponse.win, config.ui.transferTime, true)
+        this.spinButton.classList.remove('active')
+        this.board.spinFlag = true
+    }
+    
+    errorSpinStop = () => {
+        this.audio.clickFail.play()
+        this.audio.spinning.pause()
+        this.audio.spinning.load()
+        this.board.columns.forEach((col, i) => {
+            col.stopFlag = true
+            // col.isRolling = false
+        })
+        this.spinButton.classList.remove('active')
+        this.board.spinFlag = true
     }
 
-    // xx
-
     notEnoughCoins = () => {
-        this.spinButton.classList.remove('active')
-        this.autoplay = false
-        this.board.spinFlag = true
-        this.audio.spin.pause()
-        this.audio.spinning.pause()
-        this.audio.spin.load()
-        this.audio.spinning.load()
-        this.audio.notEnough.play()
+        this.errorSpinStop()
         this.coins.active()
         this.coins.deactive()
+        this.autoplay = false
         this.modal.open()
         this.modal.setHeader("not enough coins")
     }
 
 
-    transferModalInput = () => {
+    // xx
+
+        transferModalInput = () => {
         const input = document.createElement('input')
         input.classList.add('transfer-input')
         if (this.win.get() < 100) input.value = this.win.get()
@@ -203,3 +221,6 @@ export class GameUI {
 
 
 }
+
+
+const sleep = (ms) => new Promise(resolve => setTimeout(()=>resolve(), ms))
