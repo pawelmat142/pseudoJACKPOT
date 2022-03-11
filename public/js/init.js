@@ -9,7 +9,7 @@ import { SessionManager } from './game/SessionManager.js'
 const httpClient = new HttpClient() 
 
 
-const audioManager = new AudioManager(0.6)
+const audioManager = new AudioManager(0.2)
 
 
 const session = new SessionManager(httpClient)

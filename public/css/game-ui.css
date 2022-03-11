@@ -1,3 +1,62 @@
+/* TOPSCREEN */
+.top {
+    width: var(--board);
+    display: flex;
+    justify-content: space-between;
+    /* background-color: */
+    border-radius: 10px;
+}
+
+.top .legend {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #8e8e8e;
+    border: 2px solid #616161;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+    border-radius: 10px;
+    padding: 0px 20px;
+}
+
+.top .legend:last-child { gap: 22px;}
+
+.top .legend .legend-row {
+    display: flex;
+    align-items: center;
+}
+
+.top .legend .legend-row img {
+    width: calc(var(--item) * 0.5);
+}
+
+.top .legend .legend-row img:not(:first-of-type) {
+    margin-left: calc(var(--item) * -0.15);
+}
+
+.top .legend .legend-row .score {
+    position: relative;
+    font-family: fantasy;
+    font-weight: bold;
+    font-size: 30px;
+    color: #17264e;
+    text-shadow: -1px -1px 1px rgba(255,255,255,0.2), 1px 1px 1px rgba(0,0,0,0.6);
+    letter-spacing: 1px;
+}
+
+.top .legend .legend-row .equals {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 0 15px 0 3px;
+}
+
+.top .legend .legend-row .equals > div {
+    background-color: #17264e;
+    width: 12px;
+    height: 3px;
+    border-radius: 2px;
+}
+
 /* UI */
 #game-ui {
     width: var(--board);
@@ -58,6 +117,8 @@
     font-size: 32px;
     color: #ed143d;
     transition: .06s ease-in-out;
+    font-family: fantasy;
+    letter-spacing: 1px;
 }
 
 #game-ui .display > div p.active {
@@ -77,9 +138,9 @@
     border-radius: 7px;
     background: #a52a2a;
     text-align: center;
-    font-size: 12px;
+    font-size: 16px;
+    letter-spacing: 1.5px;
     color: #ababab;
-    text-shadow: 0px 1px 1px rgb(255 255 255 / 74%);
 }
 
 
@@ -155,13 +216,14 @@
     justify-content: center;
     font-size: 18px;
     color: #fff;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: 2px;
     transform: translateY(-12px);
     transition: .1s ease;
     cursor: pointer;
     position: relative;
     padding-bottom: 12%;
+    font-family: fantasy;
 }
 
 .btn span:before {
@@ -184,16 +246,17 @@
 }
 
 .btn span p {
-    background-color: #ffc4c4;
-    color: transparent;
-    text-shadow: 0px 1px 2px rgb(255 255 255 / 43%);
-    -webkit-background-clip: text;
-    -moz-background-clip: text;
-    background-clip: text;
+    /* background-color: #ffc4c4; */
+    /* color: transparent; */
+    /* text-shadow: 0px 1px 2px rgb(255 255 255 / 43%); */
+    /* -webkit-background-clip: text; */
+    /* -moz-background-clip: text; */
+    /* background-clip: text; */
     transform: rotateX(29deg);
     max-width: 90%;
     word-break: break-word;
     text-align: center;
+    text-shadow: -1px -1px 1px rgb(255 255 255 / 20%), 1px 1px 1px rgb(0 0 0 / 60%)
 }
 
 #spin span {
@@ -216,10 +279,6 @@
 .btn.green.active span {
     background-color: #119644;
 }
-.btn.green span p {
-    background-color: #0d1811;
-    text-shadow: 0px 1px 2px rgb(255 255 255 / 100%);
-}
 
 
 .btn.blue {
@@ -233,11 +292,6 @@
 .btn.blue.active span {
     background-color: #005f8b;
 }
-.btn.blue span p {
-    background-color: #02121a;
-    text-shadow: 0px 1px 2px rgb(255 255 255 / 100%);
-}
-
 
 
 
@@ -249,6 +303,29 @@
 
 
 @media (max-width: 768px) {
+
+    .top {
+        margin-top: 20px;
+    }
+
+    .top .legend {
+        padding: 0 12px;
+    }
+
+    .top .legend .legend-row .score {
+        font-size: 22px;
+    }
+
+    .top .legend .legend-row .equals {
+        margin: 0 7px 0 2px;
+        gap: 2px;
+    }
+
+    .top .legend .legend-row .equals > div {
+        width: 10px;
+        height: 3px;
+    }
+
 
     #game-ui .buttons {
         margin-top: 50px;
@@ -276,6 +353,19 @@
 }
 
 @media (max-width: 576px) {
+
+    .top .legend { padding: 0 5px}
+
+    .top .legend .legend-row .score {font-size: 18px}
+
+    .top .legend .legend-row img:not(:first-of-type) {
+        margin-left: calc(var(--item) * -0.25);
+    }
+
+    .top .legend .legend-row .equals { margin: 0 4px 0 0px}
+
+    .top .legend .legend-row:not(:last-of-type) {margin-bottom: -5px;}
+
 
     #game-ui .display {
         width: 100%;

@@ -56,19 +56,19 @@
       "name": "C",
       "src": "../img/C.png",
       "score": 2,
-      "description": "Lemon"
+      "description": "Banana"
     },
     {
       "name": "P",
       "src": "../img/P.png",
       "score": 5,
-      "description": "Orange"
+      "description": "Tomato"
     },
     {
       "name": "A",
       "src": "../img/A.png",
       "score": 10,
-      "description": "Watermelon"
+      "description": "Avocado"
     },
     {
       "name": "S",

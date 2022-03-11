@@ -57,7 +57,7 @@ export class GameBoard {
     // HIGHLIGHTs
 
     highlightScore = async () => {
-        const scoreLines = getScoreLines(this.currentState)
+        const scoreLines = this.boardGenerator.getScoreLines(this.currentState)
         await sleep(config.spin.highLightInterval*0.3)
         await this.highlightLines(scoreLines)
         await sleep(config.spin.highLightInterval*0.15)
@@ -132,47 +132,6 @@ export class GameBoard {
         }
     }
 
-}
-
-
-
-
-const getScoreLines = (state) => {
-    let lines = getHorizontalLines(state)
-    return [...lines, ...getObliqueLines(state)]
-}
-
-
-
-const getHorizontalLines = (board) => {
-    let result = []
-    for (let colIndex = 0; colIndex < board.length; colIndex++) 
-        if (colIndex > 1) 
-            for (let rowIndex = 0; rowIndex < board[colIndex].length; rowIndex++) {
-
-                if (board[colIndex][rowIndex] === board[colIndex-1][rowIndex] && 
-                    board[colIndex][rowIndex] === board[colIndex-2][rowIndex]) 
-                    
-                    result.push('r'+rowIndex)
-
-            }
-    return result
-}
-
-
-const getObliqueLines = (board) => {
-    let result = []
-    for (let colIndex = 0; colIndex < board.length; colIndex++) 
-        if (colIndex > 1) 
-            for (let rowIndex = 0; rowIndex < board[colIndex].length; rowIndex++) {
-
-                if ( !(rowIndex % 2) &&
-                    board[colIndex][rowIndex] === board[colIndex-1][Math.abs(rowIndex-1)] && 
-                    board[colIndex][rowIndex] === board[colIndex-2][Math.abs(rowIndex-2)] )
-                    result.push('x'+Math.abs(rowIndex-2))
-            }
-
-    return result
 }
 
 
