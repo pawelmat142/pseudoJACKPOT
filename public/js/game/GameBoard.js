@@ -12,6 +12,7 @@ export class GameBoard {
         this.boardGenerator = boardGenerator
         this.currentState = this.boardGenerator.getZeroScoreBoard()
         this.audio = audioManager.it
+        this.topScreen
 
         this.columns = this.currentState.map((columnState, colIndex) => 
             new GameColumn(columnState, this.board, colIndex, this.boardGenerator, this.audio)
@@ -56,24 +57,25 @@ export class GameBoard {
     
     // HIGHLIGHTs
 
-    highlightScore = async () => {
+    highlightScore = async (topScreenShow) => {
         const scoreLines = this.boardGenerator.getScoreLines(this.currentState)
         await sleep(config.spin.highLightInterval*0.3)
-        await this.highlightLines(scoreLines)
+        await this.highlightLines(scoreLines, topScreenShow)
         await sleep(config.spin.highLightInterval*0.15)
-        if (scoreLines.length > 2) await this.highlightLinesTogether(scoreLines)
-        if (scoreLines.length > 4) await this.highlightLinesTogether(scoreLines)
+        if (scoreLines.length > 2) await this.highlightLinesTogether(scoreLines, topScreenShow)
+        if (scoreLines.length > 4) await this.highlightLinesTogether(scoreLines, topScreenShow)
         await sleep(config.spin.highLightInterval*0.3)
     }
 
 
 
-    highlightLines = async (lines) => {
+    highlightLines = async (lines, topScreenShow) => {
         let promises = lines.map((line, i) => {
             return new Promise(resolve => {
                 setTimeout(() => {
                     this.audio.highlights.play()
                     this.highlightLine(line)
+                    topScreenShow(this.getValueFromLine(line))
                     resolve()
                 }, config.spin.highLightInterval*i)
             })
@@ -82,54 +84,33 @@ export class GameBoard {
     }
 
 
+    getValueFromLine = (line) => {
+        const item = this.currentState[0][parseInt(Array.from(line).pop())]
+        return config.availableItems.find(el => el.name === item).score
+    }
+
 
     highlightLine = (line) => {
         if (Array.from(line).shift() === 'r') {
             const rowIndex = parseInt(Array.from(line).pop())
             this.columns.forEach(col => col.highLight([rowIndex]))
-            // this.highlight(rowIndex, this.currentState[0][rowIndex])
             return rowIndex
         }
         if (Array.from(line).shift() === 'x') {
             const index = parseInt(Array.from(line).pop())
             this.columns.forEach((col, ind) => col.highLight([Math.abs(index - ind)]))
-            // this.highlight(index, this.currentState[0][index], 'x')
             return index
         }
     }
 
 
 
-    highlightLinesTogether = async (lines) => {
+    highlightLinesTogether = async (lines, topScreenShow) => {
         await sleep(config.spin.highLightInterval*1.1)
         this.audio.highlights.play()
         this.audio.highlightsAll.play()
         lines.forEach(line => this.highlightLine(line))
-    }
-
-
-
-    highlight = (i, item, type) => {
-        let score = config.availableItems.filter(el => el.name === item)[0].score * this.bet
-        let selector = type === 'x' ? '#game-board > .xxx > .line.x' :  '#game-board > .xxx > .line'
-        if (type === 'x' && i>1) i--
-        let element = document.querySelectorAll(selector)[i]
-        element.querySelector('.right').innerHTML = score
-        element.querySelector('.left').innerHTML = score
-        if (!element.classList.contains('active')) {
-            element.classList.add('active')
-            setTimeout(() => {
-                if (element.classList.contains('active')) element.classList.remove('active')
-            },config.spin.highLightInterval*1.1)
-        }
-        else {
-            setTimeout(() => {
-                element.classList.add('active')
-                setTimeout(() => {
-                    if (element.classList.contains('active')) element.classList.remove('active')
-                },config.spin.highLightInterval*1)
-            },config.spin.highLightInterval*0.5)
-        }
+        topScreenShow(0)
     }
 
 }

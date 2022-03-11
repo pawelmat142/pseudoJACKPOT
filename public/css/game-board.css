@@ -11,6 +11,8 @@ html {
 }
 
 body {
+    max-height: 1200px;
+    min-height: 800px;
     max-width: calc(var(--board)*1.2);
     margin: 0 auto;
     background-color: #a9afbe;
@@ -25,6 +27,7 @@ body {
 @media (max-width: 768px) {
     body {
         justify-content: unset;
+        border-radius: 18px;
     }
 }
 
@@ -148,8 +151,6 @@ body {
         --col-gap: 15px;
         --item-padding: 30px;
     }
-    
-    .xxx {display: none;} 
 }
 
 @media (max-width: 576px) {

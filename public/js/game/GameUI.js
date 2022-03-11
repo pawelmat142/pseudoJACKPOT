@@ -22,6 +22,7 @@ export class GameUI {
         this.coins = new DisplayItem(config.DOMids.coins, 100, this.audio)
         this.bet = new DisplayItem(config.DOMids.bet, 1, this.audio)
         this.win = new DisplayItem(config.DOMids.win, 0, this.audio)
+        this.topScreen = new DisplayItem(config.DOMids.topScreen, '000', this.audio)
         
         this.spinButton = document.getElementById('spin')
         this.autoplayButton = document.getElementById('autoplay')
@@ -90,16 +91,6 @@ export class GameUI {
     }
     
 
-
-    onTransfer = async () => {
-        this.modal.open()
-        this.modal.setHeader(`Transfer WIN > COINS`)
-        this.modal.addOkButton()
-        this.modal.put(this.transferModalInput())
-    }
-
-
-    
     onReset = async () => {
         if (this.board.spinFlag) {
             this.board.spinFlag = false
@@ -113,11 +104,6 @@ export class GameUI {
     onScores = async () => window.location.href = 'scores-page'
 
 
-    onSpace = () => {
-        if (this.autoplayButton.classList.contains('active')) this.onAutoplay()
-        else this.onSpin()
-    } 
-
 
     onAutoplay = async () => {
         this.autoplay = !this.autoplay
@@ -125,6 +111,12 @@ export class GameUI {
             if (!await this.onSpin()) break
         } else break
     }
+    
+
+
+    // SPIN ACTIONS
+
+    onSpace = () => this.autoplayButton.classList.contains('active') ? this.onAutoplay() : this.onSpin()
 
 
     onSpin = async () => {
@@ -142,7 +134,6 @@ export class GameUI {
         } else this.audio.clickFail.play() 
     }
 
-    // SPIN ACTIONS
 
     spinStart = () => {
         this.audio.spin.play()
@@ -152,31 +143,36 @@ export class GameUI {
         return this.board.spinStart()
     }
     
+
+
     spinStop = async (spinPromises, spinResponse) => {
         this.board.setCurrentState(spinResponse.score)
         if (spinResponse.coins !== this.coins.get()) this.coins.animateTo(spinResponse.coins, config.ui.transferTime, false)
         await sleep(config.spin.spinTime)
-        // if (!!spinPromises) await this.board.spinStop(spinPromises)
         await this.board.spinStop(spinPromises)
         this.audio.spinning.pause()
         this.audio.spinning.load()
-        await this.board.highlightScore()
-        if (spinResponse.win > this.win.get()) await this.win.animateTo(spinResponse.win, config.ui.transferTime, true)
+        await this.board.highlightScore(this.topSceenShow)
+        if (spinResponse.win > this.win.get()) {
+            await sleep(300)
+            this.topScreen.animateTo(0, config.ui.transferTime, false)
+            await this.win.animateTo(spinResponse.win, config.ui.transferTime, true)
+        }
         this.spinButton.classList.remove('active')
         this.board.spinFlag = true
     }
     
+
+
     errorSpinStop = () => {
         this.audio.clickFail.play()
         this.audio.spinning.pause()
         this.audio.spinning.load()
-        this.board.columns.forEach((col, i) => {
-            col.stopFlag = true
-            // col.isRolling = false
-        })
+        this.board.columns.forEach((col, i) => col.stopFlag = true)
         this.spinButton.classList.remove('active')
         this.board.spinFlag = true
     }
+
 
     notEnoughCoins = () => {
         this.errorSpinStop()
@@ -188,9 +184,25 @@ export class GameUI {
     }
 
 
-    // xx
+    topSceenShow = (_value) => {
+        const value = parseInt(this.topScreen.get()) +  _value * this.bet.get()
+        this.topScreen.set(value)
+        this.topScreen.active()
+        this.topScreen.deactive()
+    }
 
-        transferModalInput = () => {
+
+    // transfer actions
+
+    onTransfer = async () => {
+        this.modal.open()
+        this.modal.setHeader(`Transfer WIN > COINS`)
+        this.modal.addOkButton()
+        this.modal.put(this.transferModalInput())
+    }
+
+
+    transferModalInput = () => {
         const input = document.createElement('input')
         input.classList.add('transfer-input')
         if (this.win.get() < 100) input.value = this.win.get()

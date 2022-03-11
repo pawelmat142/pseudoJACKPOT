@@ -29,6 +29,7 @@ export class DisplayItem {
                 if (to > from) this.set(this.get()+step)
                 if (to < from) this.set(this.get()-step)
                 if ((to - from) > 0 && this.get() >= to || (to - from) < 0 && this.get() <= to) {
+                    this.get() < 0 ? this.set(0) : {}
                     this.audio.moneyTransfer.pause()
                     if (soundFlag) this.audio.money.play()
                     clearInterval(a)

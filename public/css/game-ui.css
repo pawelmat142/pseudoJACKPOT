@@ -1,21 +1,26 @@
 /* TOPSCREEN */
 .top {
     width: var(--board);
-    display: flex;
-    justify-content: space-between;
-    /* background-color: */
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
     border-radius: 10px;
+    column-gap: 15px;
 }
 
-.top .legend {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+.top > * {
     background-color: #8e8e8e;
     border: 2px solid #616161;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
     border-radius: 10px;
     padding: 0px 20px;
+    margin: 0 auto; 
+}
+
+
+.top .legend {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .top .legend:last-child { gap: 22px;}
@@ -23,6 +28,7 @@
 .top .legend .legend-row {
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .top .legend .legend-row img {
@@ -35,27 +41,37 @@
 
 .top .legend .legend-row .score {
     position: relative;
-    font-family: fantasy;
+    font-family: 'Anton';
     font-weight: bold;
     font-size: 30px;
     color: #17264e;
     text-shadow: -1px -1px 1px rgba(255,255,255,0.2), 1px 1px 1px rgba(0,0,0,0.6);
-    letter-spacing: 1px;
+    letter-spacing: 3px;
 }
 
-.top .legend .legend-row .equals {
+.top .legend .legend-row .score span {
+    margin: 0 3px;
+}
+
+.top .top-screen {
     display: flex;
-    flex-direction: column;
-    gap: 3px;
-    margin: 0 15px 0 3px;
+    align-items: center;
+    justify-content: center;
+    color: #17264e;
+    text-shadow: -1px -1px 1px rgba(255,255,255,0.2), 1px 1px 1px rgba(0,0,0,0.6);
+    font-size: 60px;
+    height: 100px;
+    margin: auto;
+    min-width: 80%;
+    letter-spacing: 5px;
+    transition: .1s ease-in-out;
 }
+ 
+#top-screen { transition: .1s ease-in-out; }
 
-.top .legend .legend-row .equals > div {
-    background-color: #17264e;
-    width: 12px;
-    height: 3px;
-    border-radius: 2px;
-}
+#top-screen.active { transform: scale(1.5);}
+
+
 
 /* UI */
 #game-ui {
@@ -117,12 +133,12 @@
     font-size: 32px;
     color: #ed143d;
     transition: .06s ease-in-out;
-    font-family: fantasy;
+    font-family: 'Anton';
     letter-spacing: 1px;
 }
 
 #game-ui .display > div p.active {
-    transform: scale(1.2);
+    transform: scale(1.4);
 } 
 
 
@@ -130,7 +146,7 @@
     padding: 3px 0;
     position: absolute;
     width: 50px;
-    bottom: -20px;
+    bottom: -25px;
     left: 50%;
     transform: translate(-50%);
     width: 65px;
@@ -223,7 +239,8 @@
     cursor: pointer;
     position: relative;
     padding-bottom: 12%;
-    font-family: fantasy;
+    font-family: 'Anton';
+    letter-spacing: 2px;
 }
 
 .btn span:before {
@@ -306,10 +323,12 @@
 
     .top {
         margin-top: 20px;
+        column-gap: 8px;
     }
-
-    .top .legend {
-        padding: 0 12px;
+    
+    .top > * {
+        width: 100%;
+        padding: 0;
     }
 
     .top .legend .legend-row .score {
@@ -324,6 +343,11 @@
     .top .legend .legend-row .equals > div {
         width: 10px;
         height: 3px;
+    }
+
+    .top .top-screen {
+        font-size: 40px;
+        height: 75px;
     }
 
 
@@ -354,7 +378,7 @@
 
 @media (max-width: 576px) {
 
-    .top .legend { padding: 0 5px}
+    .top .top-screen {font-size: 35px}
 
     .top .legend .legend-row .score {font-size: 18px}
 
@@ -365,6 +389,8 @@
     .top .legend .legend-row .equals { margin: 0 4px 0 0px}
 
     .top .legend .legend-row:not(:last-of-type) {margin-bottom: -5px;}
+
+    .top .legend .legend-row .score span { margin: 0 3px 0 0;}
 
 
     #game-ui .display {
