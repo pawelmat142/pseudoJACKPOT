@@ -10,6 +10,7 @@
     height: 50px;
     cursor: pointer;
     transition: .12s ease;
+    fill: #999999;
 }
 
 #audio-manager svg:hover {
@@ -21,7 +22,7 @@
     margin: 0 auto 10px;
     height: 150px;
     padding: 15px 0;
-    background-color: #202124;
+    background-color: #999999;
     border-radius: 20px;
     display: flex;
     align-items: flex-end;
@@ -50,6 +51,6 @@
     height: 100%;
     margin-left: 10px;
     margin-right: 10px;
-    background-color: #0084c2;
+    background-color: #2d5cd1;
     border-radius: 4px;
 }

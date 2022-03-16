@@ -6,9 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pseudoJACKPOT</title>
 
-	{{!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous"> --}}
-	{{!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" rel="stylesheet"> --}}
-
     <!-- Favicon -->
 	<link rel="apple-touch-icon" sizes="180x180" href="img/favicon/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="img/favicon/favicon-32x32.png">
@@ -17,114 +14,113 @@
 
     {{!-- styles --}}
     <link rel="stylesheet" type="text/css" href="css/font/flaticon.css">
-    <link rel="stylesheet" type="text/css" href="css/animate.css">
     <link rel="stylesheet" type="text/css" href="css/styles.css">
-    <link rel="stylesheet" type="text/css" href="css/game-board.css">
-    <link rel="stylesheet" type="text/css" href="css/game-ui.css">
+    <link rel="stylesheet" type="text/css" href="css/lights.css">
     <link rel="stylesheet" type="text/css" href="css/audio-manager.css">
     <link rel="stylesheet" type="text/css" href="css/modal.css">
 </head>
 
 <body>
 
+    <main>
 
-    {{!-- TOPSCREEN --}}
+        {{!-- board background --}}
+        <img src="../img/background-1.png" alt="background">
 
-    <div class="top">
-
-        <div class="legend">
-
-            <div class="legend-row">
-                <img src="../img/W.png" alt="Cherry"/>
-                <img src="../img/W.png" alt="Cherry"/>
-                <img src="../img/W.png" alt="Cherry"/>
-                <p class="score"><span>=</span>1</p>
-            </div>
-
-            <div class="legend-row">
-                <img src="../img/C.png" alt="Banana" />
-                <img src="../img/C.png" alt="Banana" />
-                <img src="../img/C.png" alt="Banana" />
-                <p class="score"><span>=</span>2</p>
-            </div>
-
-            <div class="legend-row">
-                <img src="../img/P.png" alt="Tomato" />
-                <img src="../img/P.png" alt="Tomato" />
-                <img src="../img/P.png" alt="Tomato" />
-                <p class="score"><span>=</span>5</p>
-            </div>
-
-        </div>
-
+        {{!-- TOP SCREEN --}}
         <div class="top-screen">
-            <p id="top-screen">000</p>
-        </div>
 
-        <div class="legend">
+            <div class="top-left">
 
-            <div class="legend-row">
-                <img src="../img/A.png" alt="Avocado" />
-                <img src="../img/A.png" alt="Avocado" />
-                <img src="../img/A.png" alt="Avocado" />
-                <p class="score"><span>=</span>10</p>
+                <div class="legend-row">
+                    <img src="../img/W.png" alt="Cherry"/>
+                    <img src="../img/W.png" alt="Cherry"/>
+                    <img src="../img/W.png" alt="Cherry"/>
+                    <p class="score"><span>=</span>1</p>
+                </div>
+
+                <div class="legend-row">
+                    <img src="../img/C.png" alt="Banana" />
+                    <img src="../img/C.png" alt="Banana" />
+                    <img src="../img/C.png" alt="Banana" />
+                    <p class="score"><span>=</span>2</p>
+                </div>
+
+                <div class="legend-row">
+                    <img src="../img/P.png" alt="Tomato" />
+                    <img src="../img/P.png" alt="Tomato" />
+                    <img src="../img/P.png" alt="Tomato" />
+                    <p class="score"><span>=</span>5</p>
+                </div>
+
             </div>
 
-            <div class="legend-row">
-                <img src="../img/S.png" alt="Sevens"/>
-                <img src="../img/S.png" alt="Sevens"/>
-                <img src="../img/S.png" alt="Sevens"/>
-                <p class="score"><span>=</span>20</p>
+            <div class="top-middle">
+                <p id="top-screen">000</p>
+            </div>
+
+            <div class="top-right">
+
+                <div class="legend-row">
+                    <img src="../img/A.png" alt="Avocado" />
+                    <img src="../img/A.png" alt="Avocado" />
+                    <img src="../img/A.png" alt="Avocado" />
+                    <p class="score"><span>=</span>10</p>
+                </div>
+
+                <div class="legend-row">
+                    <img src="../img/S.png" alt="Seven"/>
+                    <img src="../img/S.png" alt="Seven"/>
+                    <img src="../img/S.png" alt="Seven"/>
+                    <p class="score"><span>=</span>20</p>
+                </div>
+
             </div>
 
         </div>
 
-    </div>
 
 
-    {{!-- BOARD --}}
-
-    <div id="game-board">
-
-        {{#each columns as |item|}}
-            <div class="column-wrapper"><div class="column">{{#each item}}<div class="item-wrapper"></div>{{/each}}</div></div>
-        {{/each}}
-
-    </div>
 
 
-    {{!-- INTERFACE --}}
+        {{!-- GAME BOARD --}}
 
-    <div id="game-ui">
+        <div id="game-board">
 
-        {{!-- display --}}
-        <div class="display">
+            {{#each columns as |item|}}
+                <div class="column-wrapper"><div class="column">{{#each item}}<div class="item-wrapper"></div>{{/each}}</div></div>
+            {{/each}}
+
+        </div>
+
+
+
+        {{!-- DISPLAY --}}
+
+        <div id="display">
 
             <div>
-                <p id="coins">555555555</p>
-                <p class="label">COINS</p>
+                <p class="pre">COINS:</p>
+                <p id="coins">555555</p>
             </div>
-
 
             <div class="bet">
                 <i id="betDown" class="flaticon-minus"></i>
-                <div>
-                    <p id="bet">555</p> 
-                    <p class="label">BET</p>
-                </div>
+                <p id="bet">555</p> 
                 <i id="betUp" class="flaticon-plus"></i>
             </div>
 
             <div>
+                <p class="pre">WIN:</p>
                 <p id="win">555555</p>
-                <p class="label">WIN</p>
             </div>
 
         </div>
 
 
 
-        {{!-- controls --}}
+        {{!-- BUTTONS --}}
+
         <div class="buttons">
             <div class="btn" id="reset"><span><p>RESET</p></span></div>
             <div class="btn blue" id="scores"><span><p>SCORES</p></span></div>
@@ -134,17 +130,31 @@
         </div>
 
 
+        {{!-- LIGHTS --}}
 
-    </div>
+        <div class="lights">
+
+            <div class="blue"></div>
+            <div class="blue"></div>
+            <div class="blue"></div>
+            <div class="blue"></div>
+
+            <div class="blue"></div>
+            <div class="blue"></div>
+            <div class="blue"></div>
+            <div class="blue"></div>
+
+            <div id="top-light"></div>
+
+        </div>
+
+    </main>
 
 
-    {{!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
-	{{!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.0/jquery.waypoints.min.js"></script> --}}
-	{{!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script> --}}
-	{{!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script> --}}
-	{{!-- <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js"></script> --}}
+
 
     <script type="module" src="js/init.js"></script>
-    
+
 </body>
+
 </html>
