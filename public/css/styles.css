@@ -54,9 +54,6 @@ ul, ol { list-style: none; }
 
 
 
-
-
-
 /* MAIN */
 
 main {
@@ -297,17 +294,49 @@ main > img {
 }
 
 #display .bet {
+    position: relative;
     display: flex;
     justify-content: center;
-    gap: 30px;
+    gap: 0;
     align-items: center;
 }
 
 #display .bet i { 
-    font-size: 20px;
+    font-size: 15px;
     cursor: pointer;
+    transition: .1s ease;
 }
 
+#display .bet i:hover {
+    transform: scale(1.3);
+} 
+
+#display .bet p {
+    font-size: 30px;
+    padding-bottom: 10px;
+} 
+
+#display .bet > * {
+    width: 50px;
+} 
+
+#display .bet::before { 
+    content: 'BET';
+    position: absolute;
+    top: 63%;
+    left: 50%;
+    transform: translate(-50%);
+    width: 75px;
+    height: 50px;
+    background-image: url(../img/top-left.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
 
 /* BUTTONS */
 
@@ -424,23 +453,63 @@ main > img {
 }
 
 
+/* footer */
+.graphics-by {
+    color: #a7a7a7;
+    display: flex;
+    align-items: center;
+    font-weight: 300;
+    position: absolute;
+    top: 30px;
+    left: 35px;
+    z-index: 111;
+    letter-spacing: 1px;
+}
 
+.graphics-by a {
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+    gap: 5px;
+    transition: .15s ease;
+}
 
+.graphics-by a:hover {transform: scale(1.15);}
+.graphics-by img { height: 30px}
+
+main.mobile .graphics-by {
+    font-size: .6em;
+    flex-direction: column;
+    top: 21px;
+    left: 7px;
+}
+
+main.mobile .graphics-by a {
+    font-size: 1.5em;
+}
 
 /* MOBILE */
+
+main.mobile {
+    width: 100%;
+}
 
 main.mobile > img {
     max-height: unset;
     min-height: unset;
+    width: 100%;
 }
 
 main.mobile:after {
     background-image: url(../img/bg-2-m.png);
+    background-size: 100% 100%;
 }
 
 main.mobile #game-board {
     margin-left: 9%;
     width: 83%;
+    height: 37%;
+    top: 24.5%;
 }
 
 
@@ -448,47 +517,84 @@ main.mobile #game-board {
 
 main.mobile .top-screen .top-left,
 main.mobile .top-screen .top-right {
-    width: 40%;
+    width: 46%;
+    margin-top: 20%;
+    z-index: 1;
+    padding-top: 5.5%;
+    padding-left: 6%;
 }
 
 main.mobile .top-screen .top-middle {
-    width: 28%;
-    margin-left: -4%;
-    margin-right: -4%;
-    margin-top: 10%;
-}
-
-main.mobile .top-screen .legend-row .score {font-size: 30px;} 
-
-main.mobile .top-screen #top-screen {
-    font-size: 52px;
-    padding-top: 5%;
-}
-
-
-
-
-
-
-
-
-
-main.mobile #display {
-    left: 0;
-    width: 100%;
-    padding-top: 5%;
+    width: 35%;
+    margin-left: -13%;
+    margin-right: -13%;
+    margin-top: 5%;
+    height: 12vh;
     background-size: 100% 100%;
 }
 
-main.mobile #display > * {font-size: 35px;}
-main.mobile #display .pre {font-size: 22px;}
+main.mobile .top-screen .legend-row .score {font-size: 1.4em;} 
+
+main.mobile .top-screen #top-screen {
+    font-size: 2.2em;
+    padding-top: 11%;
+}
+
+main.mobile .top-screen .legend-row .score span {
+    margin-right: 8px;
+}
+
+
+/* display */
+main.mobile #display {
+    left: 0;
+    top: 65%;
+    width: 100%;
+    padding-top: 7%;
+    background-size: 100% 100%;
+}
+
+main.mobile #display > * {font-size: 1.8em}
+
+main.mobile #display .pre {font-size: .6em;}
+
+main.mobile #display .bet > * { width: 30px}
+
+main.mobile #display .bet i { font-size: .7em;}
+
+main.mobile #display .bet::before { 
+    font-size: .7em;
+    width: 59px;
+    height: 43px;
+    top: 72%;
+}
 
 
 
+/* buttons */
+main.mobile .buttons {
+    grid-template-columns: 1fr 1fr 1fr;
+    top: 77%;
+    row-gap: 7px;
+}
+
+main.mobile .buttons > * { width: 100%;}
+
+main.mobile .buttons #spin {
+    grid-column-start: 2;
+    grid-column-end: 4;
+}
+
+main.mobile .buttons #spin span { padding-bottom: 2% }
+
+main.mobile .buttons .btn span {
+    height: 48px;
+    transform: translateY(-7px);
+    padding-bottom: 6%; 
+}
 
 
-
-
+/* lights */
 main.mobile .lights .blue {
     display: none;
 }

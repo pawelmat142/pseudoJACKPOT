@@ -12,12 +12,8 @@ export class HttpClient {
 
     set sessionId(id) { this._sessionId = id }
 
+    
     // SESSION
-
-    // newSession = async () => {
-    //     return await get(`${this.url}session`)
-    // }
-
 
     getSessionData = async (_id) => {
         const id = !!_id ? _id : this.sessionId
