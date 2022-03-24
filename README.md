@@ -13,6 +13,8 @@
 - install the MySQL database
 - implement communication between the application and the database
 - using the GIT version control system
+
+The graphics for the project were made by my friend [Krzywas](Instagram.com/krzywas.ink)
  
 ## Technologies
 Project is created with:
