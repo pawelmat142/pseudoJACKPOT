@@ -9,12 +9,6 @@ router.get('/', pagesController.home)
 router.get('/scores-page', pagesController.scoresPage)
 router.get('/session/:sessionId/spins', pagesController.sessionSpins)
 
-// for another app
-router.get('/todo', (req, res) => 
-    res.sendFile(path.resolve(__dirname + '/todo_app/index.html'))
-)
-// end for another app
-
 router.get('/session', gameController.newSession)
 router.get('/session/:sessionId', gameController.getSession)
 router.get('/sessions/:sessionsIds', gameController.getSessions)
