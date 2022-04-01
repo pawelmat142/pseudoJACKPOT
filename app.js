@@ -1,12 +1,10 @@
 const express = require('express')
 const router = require('./router')
 const path = require('path')
-const vhost = require('vhost')
 const {port} = require('./config')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const flash = require('connect-flash')
-const {db_config} = require('./config')
 
 const app = express()
 

@@ -1,6 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const path = require('path')
 
 const pagesController = require('./controllers/pagesController')
 const gameController = require('./controllers/gameController')
