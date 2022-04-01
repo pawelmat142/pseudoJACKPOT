@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const path = require('path')
 
 const pagesController = require('./controllers/pagesController')
 const gameController = require('./controllers/gameController')
@@ -7,6 +8,12 @@ const gameController = require('./controllers/gameController')
 router.get('/', pagesController.home)
 router.get('/scores-page', pagesController.scoresPage)
 router.get('/session/:sessionId/spins', pagesController.sessionSpins)
+
+// for another app
+router.get('/todo', (req, res) => 
+    res.sendFile(path.resolve(__dirname + '/todo_app/index.html'))
+)
+// end for another app
 
 router.get('/session', gameController.newSession)
 router.get('/session/:sessionId', gameController.getSession)
