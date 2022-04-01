@@ -33,6 +33,6 @@ const app2 = express()
 app2.use(express.static(path.join(__dirname, 'todo_app')))
 app2.use(bodyParser.urlencoded({ extended: false }));
 app2.use(bodyParser.json());
-app2.use('/', (req, res) => res.sendFile(path.resolve(__dirname + 'todo_app/index.html')) )
+app2.use('/', (req, res) => res.sendFile(path.resolve(__dirname + '/todo_app/index.html')) )
 app2.listen(443, () => console.log('listening on port: ' + 443))
 // end another app
