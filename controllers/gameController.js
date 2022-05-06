@@ -61,7 +61,11 @@ exports.transfer = async (req, res) => {
 
 exports.spin = async (req, res) => {
     try {
+        const time = Date.now()
+        console.log('start spin')
         const score = scoreGenerator.getScore()
+        console.log('score', score)
+        console.log(Date.now() - time, 'ms')
         const sessionId = req.params.sessionId
         const sessionData = req.data
         const bet = parseInt(sessionData.bet)
@@ -70,13 +74,21 @@ exports.spin = async (req, res) => {
             return
         }
         const spin = await addSpin(sessionId, score, bet)
+        console.log('spin', spin)
+        console.log(Date.now() - time, 'ms')
         if (!spin) throw new Error('add spin error')
         const coins = await updateCoinsBySessionId(sessionId, parseInt(sessionData.coins - bet))
+        console.log('coins', coins)
+        console.log(Date.now() - time, 'ms')
         if (typeof coins !== 'number') throw new Error('update coins error')
         const win = await updateWinBySessionId(sessionId, parseInt(sessionData.win + parseInt(spin.score) * bet))
+        console.log('win', win)
+        console.log(Date.now() - time, 'ms')
         if (typeof win !== 'number') throw new Error('update win error')
         const update = await sessionController.updateSession(sessionId)
-
+        console.log('update', update)
+        console.log(Date.now() - time, 'ms')
+        
         res.status(200).json({
             coins: coins,
             bet: bet,
@@ -84,6 +96,7 @@ exports.spin = async (req, res) => {
             score: score
         })
         console.log(`session: ${sessionId}, score: ${score}, bet: ${bet} `)
+        console.log(Date.now() - time, 'ms')
     }
     catch (error) {
         console.log(error)
