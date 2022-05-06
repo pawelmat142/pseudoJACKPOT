@@ -12,7 +12,7 @@
 	<link rel="icon" type="image/png" sizes="16x16" href="img/favicon/favicon-16x16.png">
 	<link rel="manifest" href="img/favicon/site.webmanifest">
 
-    {{!-- styles --}}
+     <!-- styles  -->
     <link rel="stylesheet" type="text/css" href="css/font/flaticon.css">
     <link rel="stylesheet" type="text/css" href="css/styles.css">
     <link rel="stylesheet" type="text/css" href="css/lights.css">
@@ -24,10 +24,10 @@
 
     <main>
 
-        {{!-- board background --}}
+         <!-- board background  -->
         <img id="bg-img" alt="background">
 
-        {{!-- TOP SCREEN --}}
+         <!-- TOP SCREEN  -->
         <div class="top-screen">
 
             <div class="top-left">
@@ -83,43 +83,66 @@
 
 
 
-        {{!-- GAME BOARD --}}
+        <!-- GAME BOARD -->
 
         <div id="game-board">
 
-            {{#each columns as |item|}}
-                <div class="column-wrapper"><div class="column">{{#each item}}<div class="item-wrapper"></div>{{/each}}</div></div>
-            {{/each}}
+            <div class="column-wrapper">
+                <div class="column">
+                    <div class="item-wrapper"></div>
+                    <div class="item-wrapper"></div>
+                    <div class="item-wrapper"></div>
+                    <div class="item-wrapper"></div>
+                </div>
+            </div>
+
+            <div class="column-wrapper">
+                <div class="column">
+                    <div class="item-wrapper"></div>
+                    <div class="item-wrapper"></div>
+                    <div class="item-wrapper"></div>
+                    <div class="item-wrapper"></div>
+                </div>
+            </div>
+
+            <div class="column-wrapper">
+                <div class="column">
+                    <div class="item-wrapper"></div>
+                    <div class="item-wrapper"></div>
+                    <div class="item-wrapper"></div>
+                    <div class="item-wrapper"></div>
+                </div>
+            </div>
 
         </div>
 
 
 
-        {{!-- DISPLAY --}}
+        <!-- DISPLAY  -->
 
         <div id="display">
 
             <div>
                 <p class="pre">COINS:</p>
-                <p id="coins">555555</p>
+                <p id="coins">xxx</p>
             </div>
 
             <div class="bet">
                 <i id="betDown" class="flaticon-minus"></i>
-                <p id="bet">555</p> 
+                <p id="bet">xxx</p> 
                 <i id="betUp" class="flaticon-plus"></i>
             </div>
 
             <div>
                 <p class="pre">WIN:</p>
-                <p id="win">555555</p>
+                <p id="win">xxx</p>
             </div>
 
         </div>
 
 
 
-        {{!-- BUTTONS --}}
+         <!-- BUTTONS  -->
 
         <div class="buttons">
             <div class="btn" id="reset"><span><p>RESET</p></span></div>
@@ -130,7 +153,7 @@
         </div>
 
 
-        {{!-- LIGHTS --}}
+         <!-- LIGHTS  -->
 
         <div class="lights">
 
@@ -148,7 +171,7 @@
 
         </div>
 
-        {{!-- graphics by --}}
+         <!-- graphics by  -->
         <div class="graphics-by">
             <p>Graphics by:</p>
             <a href="https://www.instagram.com/krzywas.ink/" target="_blank">

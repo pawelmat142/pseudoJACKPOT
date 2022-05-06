@@ -2,7 +2,7 @@ export class HttpClient {
 
     constructor() {
 
-        this.url = '/'
+        this.url = ''
 
         this._sessionId = -1
 
@@ -16,8 +16,10 @@ export class HttpClient {
     // SESSION
 
     getSessionData = async (_id) => {
-        const id = !!_id ? _id : this.sessionId
-        return await get(`${this.url}session/${id}`)
+        if (this.sessionId < 0) {
+            this.sessionId = await get(`${this.url}session`)
+        }
+        return await get(`${this.url}session/${this.sessionId}`)
     }
 
 
@@ -61,25 +63,6 @@ export class HttpClient {
     }
 
 
-
-    postHref = (data, endpoint) => {
-        const url = '/' + endpoint
-        const input = document.createElement('input')
-        input.setAttribute('type', 'text')
-        input.setAttribute('name', 'data')
-        input.setAttribute('value', data)
-        const form = document.createElement('form')
-        form.setAttribute('action', url)
-        form.setAttribute('method', 'post');
-        form.setAttribute('hidden', 'true');
-        form.appendChild(input)
-        document.body.appendChild(form)
-        form.submit()
-        form.remove()
-        return true
-    }
-
-    
 }
 
 
@@ -93,8 +76,8 @@ const get = async (url) => {
         else throw new Error(response.status)
     }
     catch (error) {
-        console.log(error)
-        return error
+        console.log(error.message)
+        return error 
     }
 }
 

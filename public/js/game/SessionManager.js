@@ -16,8 +16,8 @@ export class SessionManager {
         }
         this.http.sessionId = _id
     }
-
-
+    
+    
     get id() {
         return !!localStorage.getItem('sessionId') ? parseInt(localStorage.getItem('sessionId')) : -1
     }

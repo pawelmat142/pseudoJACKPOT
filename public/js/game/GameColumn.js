@@ -149,7 +149,8 @@ export class GameColumn {
         const el = document.createElement('div')
         el.classList.add('item-wrapper')
         el.appendChild(img)
-        column.removeChild(column.lastChild)
+        const lastChild = this.column.querySelectorAll('.item-wrapper')[3]
+        column.removeChild(lastChild)
         column.insertBefore(el, column.querySelector('.item-wrapper'))
     }
     
@@ -160,7 +161,8 @@ export class GameColumn {
         const el = document.createElement('div')
         el.classList.add('item-wrapper')
         el.appendChild(img)
-        column.removeChild(column.lastChild)
+        const lastChild = this.column.querySelectorAll('.item-wrapper')[3]
+        column.removeChild(lastChild)
         column.insertBefore(el, column.querySelector('.item-wrapper'))
     }
 
@@ -188,11 +190,13 @@ const getImgElement = (item, itemsImages) => itemsImages[getImgIndex(item)].clon
 const getImgIndex = (_name) => config.availableItems.map(item => item.name).indexOf(_name)
 
 
-const loadImages = async () => Promise.all(config.availableItems.map(item => new Promise(resolve => {
-        const img = new Image()
-        img.src = item.src
-        img.onload = () => resolve(img)
-    })
+const loadImages = async () => 
+    Promise.all(config.availableItems.map(item => 
+        new Promise(resolve => {
+            const img = new Image()
+            img.src = item.src
+            img.onload = () => resolve(img)
+        })
 ))
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))

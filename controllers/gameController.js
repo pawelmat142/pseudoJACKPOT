@@ -1,150 +1,133 @@
-const scoreGenerator = require('./ScoreGenerator')
-const query = require('../database/Query')
-
-// SESSION
-
-exports.newSession = async (req, res, next) => {
-    try {
-        const session = await query.newSessionId()
-        if (session) res.json(session)
-        else throw new Error('db response error')
-    }
-    catch (error) { next(error) }
-}
-
-
-exports.getSession = async (req, res, next) => {
-    try {
-        const sessionId = parseInt(req.params.sessionId)
-        if (sessionId >= 0 && await query.hasSession(sessionId)) {
-            let session = await query.getSessionById(sessionId)
-            const lastSpin = await query.getLastSpinBySessionId(sessionId)
-            if (!!lastSpin) {
-                const minutesAgo = parseInt( ( Date.now() - new Date(lastSpin.time).getTime() ) / 1000 / 60 )
-                if (minutesAgo > 10) session = await newSession()
-            }
-            res.json(session)
-        } else res.json(await newSession())
-    } catch (error) { next(error) }
-}
-
-
-const newSession = async () => {
-    const sessionId = await query.newSession()
-    if (!!sessionId) {
-        const session = await query.getSessionById(sessionId)
-        if (!!session) return session
-        else throw new Error('db response error')
-    } else throw new Error('new session error')
-}
-
-
-exports.getSessions = async (req, res, next) => {
-    try {
-        const sessionsIds = req.params.sessionsIds.split(',')
-        const promises = sessionsIds.map(async id => query.getSessionById(id))
-        res.json(await Promise.all(promises))
-    } catch (error) { next(error) }
-}
-
-
-exports.stopSession = async (req, res, next) => {
-    try {
-        const sessionId = req.params.sessionId
-        if (await query.stopSessionById(sessionId)) res.json(true)
-        else throw new Error('db response error')
-    } catch (error) { next(error) }
-}
-
+const scoreGenerator = require('../modules/ScoreGenerator')
+const sessionController = require('./sessionController')
+const {db_config} = require('../config')
 
 // BET
 
-exports.betUp = async (req, res, next) => {
+exports.betUp = async (req, res) => {
     try {
         const sessionId = req.params.sessionId
-        const sessionData = await query.getSessionById(sessionId)
-        if (sessionData) { 
-            let bet = parseInt(sessionData.bet)
-            const result = await query.updateBetBySessionId(sessionId, bet + 1)
-            if (result) res.json(bet + 1)
-            else throw new Error('db response error')
-        }
-        else throw new Error('db response error')
+        const sessionData = req.data
+        let bet = parseInt(sessionData.bet)
+        await updateBetBySessionId(sessionId, bet + 1)
+        res.status(200).json(bet + 1)
     }
-    catch (error) { next(error) }
+    catch (error) { res.status(400).json({message: error.message}) }
 }
 
 
-exports.betDown = async (req, res, next) => {
+exports.betDown = async (req, res) => {
     try {
         const sessionId = req.params.sessionId
-        const sessionData = await query.getSessionById(sessionId)
-        if (sessionData) {
-            let bet = parseInt(sessionData.bet)
-            if (bet > 1) {
-                const result = await query.updateBetBySessionId(sessionId, bet - 1)
-                if (result) res.json(bet - 1)
-                else throw new Error('db response error')
-            } else res.json(bet)
-        } else throw new Error('db response error')
-    } catch (error) { next(error) }
+        const sessionData = req.data
+        let bet = parseInt(sessionData.bet)
+        if (bet > 1) {
+            await updateBetBySessionId(sessionId, bet - 1)
+            res.json(bet - 1)
+        } else res.json(bet)
+    }
+    catch (error) { res.status(400).json({message: error.message}) }
 }
-
 
 // TRANSFER
 
-exports.transfer = async (req, res, next) => {
+exports.transfer = async (req, res) => {
     try {
-        const transfer = parseInt(req.body.transfer)
         const sessionId = req.params.sessionId
-        const sessionData = await query.getSessionById(sessionId)
-        if (sessionData) {
-            if (transfer <= sessionData.win) {
-                let win = await query.updateWinBySessionId(sessionId, sessionData.win - transfer) 
-                let coins = await query.updateCoinsBySessionId(sessionId, sessionData.coins + transfer)
-                if (win && coins || parseInt(win) === 0) {
-                    const spin = await query.addSpin(sessionId, transfer, -1)
-                    console.log(`session: ${sessionId} - transfering: ${transfer} coins`)
-                    if (!!spin) res.json({
-                        coins: coins,
-                        bet: sessionData.bet,
-                        win: win
-                    })
-                    else throw new Error('db response error')
-                } else throw new Error('db response error')
-            } else throw new Error('not enough win')
-        } else throw new Error('db response error')
-    } catch (error) { next(error) }
+        const sessionData = req.data
+        const transfer = parseInt(req.body.transfer)
+        if (!transfer) throw new Error('transfer error')
+        if (transfer <= sessionData.win) {
+            let win = await updateWinBySessionId(sessionId, sessionData.win - transfer) 
+            let coins = await updateCoinsBySessionId(sessionId, sessionData.coins + transfer)
+            if (win && coins || parseInt(win) === 0) {
+                const spin = await addSpin(sessionId, transfer, -1)
+                 .log(`session: ${sessionId} - transfering: ${transfer} coins`)
+                if (spin) res.json({
+                    coins: coins,
+                    bet: sessionData.bet,
+                    win: win
+                })
+                else throw new Error('spin error')
+            } else throw new Error('transfer - pdate win, coins error')
+        } else throw new Error('not enough win')
+    }
+    catch (error) { res.status(400).json({message: error.message}) }
 }
+
 
 
 // SPIN
 
-exports.spin = async (req, res, next) => {
+exports.spin = async (req, res) => {
     try {
         const score = scoreGenerator.getScore()
         const sessionId = req.params.sessionId
-        const sessionData = await query.getSessionById(sessionId)
-        if (sessionData) {
-            const bet = parseInt(sessionData.bet)
-            if (!(sessionData.coins < sessionData.bet)){
-                const spin = await query.addSpin(sessionId, score, bet)
-                if (spin) {
-                    const coins = await query.updateCoinsBySessionId(sessionId, parseInt(sessionData.coins - bet))
-                    const win = await query.updateWinBySessionId(sessionId, parseInt(sessionData.win + parseInt(spin.score) * bet))
-                    if (coins && win || parseInt(win) === 0 || parseInt(coins) === 0) {
-                        if (await query.stopSessionById(sessionId)) {
-                            res.json({
-                                coins: coins,
-                                bet: bet,
-                                win: win,
-                                score: score
-                            })
-                            console.log(`session: ${sessionId}, score: ${score}, bet: ${bet} `)
-                        } else throw new Error('db response error')
-                    } else throw new Error('db response error')
-                } else throw new Error('db response error')
-            } else res.status(204).json({board: "not enough coins"})
-        } else throw new Error('db response error')
-    } catch (error) { next(error) }
+        const sessionData = req.data
+        const bet = parseInt(sessionData.bet)
+        if ((sessionData.coins < sessionData.bet)) {
+            res.status(204).json({board: "not enough coins"})
+            return
+        }
+        const spin = await addSpin(sessionId, score, bet)
+        if (!spin) throw new Error('add spin error')
+        const coins = await updateCoinsBySessionId(sessionId, parseInt(sessionData.coins - bet))
+        if (typeof coins !== 'number') throw new Error('update coins error')
+        const win = await updateWinBySessionId(sessionId, parseInt(sessionData.win + parseInt(spin.score) * bet))
+        if (typeof win !== 'number') throw new Error('update win error')
+        const update = await sessionController.updateSession(sessionId)
+
+        res.status(200).json({
+            coins: coins,
+            bet: bet,
+            win: win,
+            score: score
+        })
+        console.log(`session: ${sessionId}, score: ${score}, bet: ${bet} `)
+    }
+    catch (error) {
+        console.log(error)
+        res.status(400).json({message: error.message})
+    }
+}
+
+
+const updateBetBySessionId = async (sessionId, bet) => {
+    const knex = require('knex')(db_config)
+    const row = await knex('sessions')
+        .where('id', sessionId)
+        .update('bet', bet)
+    knex.destroy()
+    if (row) return bet
+    else throw new Error('update bet error')
+}
+
+const updateWinBySessionId = async (sessionId, win) => {
+    const knex = require('knex')(db_config)
+    const rows = await knex('sessions')
+        .where('id', sessionId)
+        .update('win', win)
+    knex.destroy()
+    return rows? win : false
+}
+
+const updateCoinsBySessionId = async (sessionId, coins) => {
+    const knex = require('knex')(db_config)
+    const rows = await knex('sessions')
+        .where('id', sessionId)
+        .update('coins', coins)
+    knex.destroy()
+    return rows? coins : false
+}
+
+const addSpin = async (_sessionId, _score, _bet) => {
+    const spin = {
+        session_id: _sessionId,
+        score: _score,
+        bet: _bet
+    }
+    const knex = require('knex')(db_config)
+    const spinId = await knex('spins').insert(spin)
+    knex.destroy()
+    return spinId? spin : false
 }
