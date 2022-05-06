@@ -1,5 +1,3 @@
-
-
 module.exports = async (sessionId, bet) => {
 
     const {db_config} = require('../config')

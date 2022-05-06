@@ -1,4 +1,3 @@
-const config = require('../public/gameConfig.json')
 const scores = require("./scores")
 
 class ScoreGenerator {
