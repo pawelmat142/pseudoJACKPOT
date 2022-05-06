@@ -1,11 +1,5 @@
 const {db_config} = require('../config')
 
-const NewSession = {
-    coins: 100,
-    bet: 1,
-    win: 0
-}
-
 
 // SESSION
 
@@ -81,7 +75,7 @@ const updateSessionById = async (sessionId) => {
     const knex = require('knex')(db_config)
     const rows = await knex('sessions')
         .where('id', sessionId)
-        .update('stop_time', new Date())
+        .update('stop_time', new Date().toLocaleDateString())
     knex.destroy()
     return rows
 }
@@ -89,7 +83,7 @@ const updateSessionById = async (sessionId) => {
 
 const newSession = async () => {
     const knex = require('knex')(db_config)
-    const sessionId = (await knex('sessions').insert(NewSession)).pop()
+    const sessionId = (await knex('sessions').insert(getNewSession())).pop()
     knex.destroy()
     if (!sessionId) throw new Error('Get new session id error')
     return sessionId
@@ -116,6 +110,17 @@ const getLastSpinBySessionId = async (sessionId) => {
         .where('session_id', sessionId)).pop()
     knex.destroy()
     return spin
+}
+
+
+const getNewSession = () => {
+    return {
+        start_time: new Date().toLocaleDateString(),
+        stop_time: new Date().toLocaleDateString(),
+        coins: 100,
+        bet: 1,
+        win: 0
+    }
 }
 
 

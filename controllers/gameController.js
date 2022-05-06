@@ -42,7 +42,7 @@ exports.transfer = async (req, res) => {
             let coins = await updateCoinsBySessionId(sessionId, sessionData.coins + transfer)
             if (win && coins || parseInt(win) === 0) {
                 const spin = await addSpin(sessionId, transfer, -1)
-                 .log(`session: ${sessionId} - transfering: ${transfer} coins`)
+                console.log(`session: ${sessionId} - transfering: ${transfer} coins`)
                 if (spin) res.json({
                     coins: coins,
                     bet: sessionData.bet,
