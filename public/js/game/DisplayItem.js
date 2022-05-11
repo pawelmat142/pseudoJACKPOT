@@ -18,17 +18,32 @@ export class DisplayItem {
     animateTo = (_to, _duration, soundFlag) => {
         this.active()
         return new Promise(resolve => {
+
             const from = this.get()
             const to = parseInt(_to)
-            const interval = parseInt(_duration) / Math.abs(to - from) 
+
+            let difference = Math.abs(to - from)
+
+            const interval = parseInt(_duration) / 10
+
+            let step = parseInt(difference/interval)
+            if (step < 1) step = 1
+
+            let i=0
             let a = setInterval(() => {
+
                 if (soundFlag) this.audio.moneyTransfer.play()
-                let step = 1
-                if (Math.abs(to - from) > 500) step = 3
-                if (Math.abs(to - from) > 1000) step = 10
+
+                // if (Math.abs(to - from) > 500) step = 3
+                // if (Math.abs(to - from) > 1000) step = 10
+
                 if (to > from) this.set(this.get()+step)
                 if (to < from) this.set(this.get()-step)
-                if ((to - from) > 0 && this.get() >= to || (to - from) < 0 && this.get() <= to) {
+
+
+                if (Math.abs(this.get() - from) > step) {
+
+
                     this.set(_to)
                     this.audio.moneyTransfer.pause()
                     if (soundFlag) this.audio.money.play()
@@ -45,3 +60,4 @@ export class DisplayItem {
     deactive = () => setTimeout(() => this.DOM.classList.remove("active"), 100)
     
 }
+

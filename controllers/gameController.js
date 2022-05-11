@@ -61,48 +61,45 @@ exports.transfer = async (req, res) => {
 
 exports.spin = async (req, res) => {
     try {
-        const time = Date.now()
-        console.log('start spin')
-        const score = scoreGenerator.getScore()
-        console.log('score', score)
-        console.log(Date.now() - time, 'ms')
-        const sessionId = req.params.sessionId
         const sessionData = req.data
-        const bet = parseInt(sessionData.bet)
+        const score = scoreGenerator.getScore()
+
         if ((sessionData.coins < sessionData.bet)) {
             res.status(204).json({board: "not enough coins"})
             return
         }
-        const spin = await addSpin(sessionId, score, bet)
-        console.log('spin', spin)
-        console.log(Date.now() - time, 'ms')
-        if (!spin) throw new Error('add spin error')
-        const coins = await updateCoinsBySessionId(sessionId, parseInt(sessionData.coins - bet))
-        console.log('coins', coins)
-        console.log(Date.now() - time, 'ms')
-        if (typeof coins !== 'number') throw new Error('update coins error')
-        const win = await updateWinBySessionId(sessionId, parseInt(sessionData.win + parseInt(spin.score) * bet))
-        console.log('win', win)
-        console.log(Date.now() - time, 'ms')
-        if (typeof win !== 'number') throw new Error('update win error')
-        const update = await sessionController.updateSession(sessionId)
-        console.log('update', update)
-        console.log(Date.now() - time, 'ms')
-        
-        res.status(200).json({
-            coins: coins,
-            bet: bet,
-            win: win,
-            score: score
-        })
-        console.log(`session: ${sessionId}, score: ${score}, bet: ${bet} `)
-        console.log(Date.now() - time, 'ms')
+
+        let a = updateStateServerSide(score, sessionData)
+        res.status(200).json(score)
     }
     catch (error) {
         console.log(error)
         res.status(400).json({message: error.message})
     }
 }
+
+
+const updateStateServerSide = (score, sessionData) => new Promise(async (resolve, reject) => {
+
+    sessionData.coins -= sessionData.bet
+    sessionData.win += score*sessionData.bet
+    sessionData.stop_time = new Date().toLocaleDateString()
+
+    const knex = require('knex')(db_config)
+
+    const row = await knex('sessions')
+        .where('id', sessionData.id)
+        .update('coins', sessionData.coins)
+        .update('win', sessionData.win)
+
+    knex.destroy()
+
+    console.log(`sessionId: ${sessionData.id}, score: ${score}, coins: ${sessionData.coins}, win: ${sessionData.win}`)
+
+    if (row) resolve()
+    else reject()
+
+})
 
 
 const updateBetBySessionId = async (sessionId, bet) => {

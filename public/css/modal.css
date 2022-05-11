@@ -113,3 +113,11 @@
 }
 
 
+
+/* MOBILE */
+#modal-bg.mobile > div {
+    width: 90%;
+    min-width: 90%;
+}
+
+

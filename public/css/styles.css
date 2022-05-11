@@ -518,7 +518,7 @@ main.mobile #game-board {
 main.mobile .top-screen .top-left,
 main.mobile .top-screen .top-right {
     width: 46%;
-    margin-top: 20%;
+    margin-top: 8vh;
     z-index: 1;
     padding-top: 5.5%;
     padding-left: 6%;

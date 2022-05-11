@@ -135,7 +135,7 @@ export class AudioManager {
         if (_volume > 1) {
             _volume = 1
             this.it.clickFail.play()
-        }else this.it.changeVolume.play()
+        } else this.it.changeVolume.play()
         this.volume = _volume
         return _volume
     }

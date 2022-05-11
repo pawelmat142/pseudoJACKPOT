@@ -155,24 +155,34 @@ export class GameUI {
     
 
 
-    spinStop = async (spinPromises, spinResponse) => {
-        this.board.setCurrentState(spinResponse.score)
-        if (spinResponse.coins !== this.coins.get()) this.coins.animateTo(spinResponse.coins, config.ui.transferTime, false)
-        await sleep(config.spin.spinTime)
+    spinStop = async (spinPromises, score) => {
+        this.board.setCurrentState(score)
+
+        let win = this.win.get()
+        let coins = this.coins.get() - this.bet.get()
+        this.coins.animateTo(coins, config.ui.transferTime, false)
+
+        
+        await sleep(config.spin.spinTime) 
         await this.board.spinStop(spinPromises)
+
         this.audio.spinning.pause()
         this.audio.spinning.load()
+
         await this.board.highlightScore(this.topSceenShow)
-        if (spinResponse.win > this.win.get()) {
+
+        if (score !== 0) {
+            win += this.bet.get()*score
             await sleep(300)
             this.topScreen.animateTo(0, config.ui.transferTime, false)
-            await this.win.animateTo(spinResponse.win, config.ui.transferTime, true)
+            let a = score > 20 ? 5 : 2
+            await this.win.animateTo(win, config.ui.transferTime*a, true)
         }
+
         this.spinButton.classList.remove('active')
         this.board.spinFlag = true
     }
     
-
 
     errorSpinStop = () => {
         this.audio.clickFail.play()

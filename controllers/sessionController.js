@@ -66,10 +66,22 @@ exports.stopSession = async (req, res) => {
     } catch (error) { res.status(400).json({message: error.message}) }
 }
 
-exports.updateSession = async (sessionId) => {
-    const result = await updateSessionById(sessionId)
-    return result
+
+
+exports.updateSession = async (newSessionObj) => {
+    console.log(newSessionObj.session_id)
+    console.log(newSessionObj.bet)
+    console.log(newSessionObj.score)
+    // let newCoins = 
+    // const result = await updateSessionById(sessionId)
+    // return result
+    return true 
 }
+
+// exports.updateSession = async (sessionId) => {
+//     const result = await updateSessionById(sessionId)
+//     return result
+// }
 
 const updateSessionById = async (sessionId) => {
     const knex = require('knex')(db_config)
