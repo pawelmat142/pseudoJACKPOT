@@ -78,6 +78,7 @@ export class GameUI {
 
     onBetUp = async () => {
         const newBet = await this.http.betUp()
+
         if (newBet !== this.bet.get()) {
             this.audio.betUp.play()
             this.bet.set(newBet)
@@ -182,7 +183,6 @@ export class GameUI {
         this.spinButton.classList.remove('active')
         this.board.spinFlag = true
     }
-    
 
     errorSpinStop = () => {
         this.audio.clickFail.play()
@@ -193,8 +193,6 @@ export class GameUI {
         this.board.spinFlag = true
     }
 
-
-
     notEnoughCoins = () => {
         this.errorSpinStop()
         this.coins.active()
@@ -204,8 +202,6 @@ export class GameUI {
         this.modal.setHeader("not enough coins")
     }
 
-
-
     topSceenShow = (_value) => {
         const value = parseInt(this.topScreen.get()) +  _value * this.bet.get()
         this.topScreen.set(value)
@@ -213,21 +209,16 @@ export class GameUI {
         this.topScreen.deactive()
     }
 
-
-
-
     // transfer actions
 
     onTransfer = async () => {
         this.modal.open()
         this.modal.setHeader(`Transfer WIN > COINS`)
         this.modal.addOkButton()
-        this.modal.put(this.transferModalInput())
+        this.modal.put(this.getTransferModalInput())
     }
 
-
-
-    transferModalInput = () => {
+    getTransferModalInput = () => {
         const input = document.createElement('input')
         input.classList.add('transfer-input')
         if (this.win.get() < 100) input.value = this.win.get()
@@ -237,28 +228,35 @@ export class GameUI {
         return input
     }
 
-
-
     transferAction = async (e) => {
         this.board.spinFlag = false
         const input = document.getElementById('modal').querySelector('input')
-        const response = await this.http.transfer({"transfer": input.value})
+        const transfer = parseInt(input.value)
+        const transfered = await this.http.transfer({"transfer": input.value})
         this.modal.close()
-        if (parseInt(response.win) !== this.win.get()) {
-            this.coins.animateTo(response.coins, config.ui.transferTime, true)
-            await this.win.animateTo(response.win, config.ui.transferTime, false)
+        if (transfered) {
+            this.coins.animateTo(this.coins.get()+transfer, config.ui.transferTime, true)
+            await this.win.animateTo(this.win.get()-transfer, config.ui.transferTime, false)
         }
         this.board.spinFlag = true
     }
 
-
+    // transferAction = async (e) => {
+    //     this.board.spinFlag = false
+    //     const input = document.getElementById('modal').querySelector('input')
+    //     const response = await this.http.transfer({"transfer": input.value})
+    //     this.modal.close()
+    //     if (parseInt(response.win) !== this.win.get()) {
+    //         this.coins.animateTo(response.coins, config.ui.transferTime, true)
+    //         await this.win.animateTo(response.win, config.ui.transferTime, false)
+    //     }
+    //     this.board.spinFlag = true
+    // }
 
     onInputTransfer = (e, input) => {
         if (input.value > this.win.get()) input.value = this.win.get()
         if (input.value < 0) input.value = 0
     }
-
 }
 
-
-const sleep = (ms) => new Promise(resolve => setTimeout(()=>resolve(), ms))
+const sleep = (ms) => new Promise(resolve=>setTimeout(()=>resolve(),ms))
