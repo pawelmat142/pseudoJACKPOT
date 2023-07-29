@@ -1,5 +1,5 @@
-const {db_config} = require('../config')
-
+const Session = require('../model/Session')
+const Spin = require('../model/Spin')
 
 // SESSION
 
@@ -15,6 +15,7 @@ exports.sessionData = async (req, res, next) => {
     catch (error) { res.status(400).json({message: error.message}) }
 }
 
+
 exports.newSession = async (req, res) => {
     try {
         const sessionId = await newSession()
@@ -24,9 +25,10 @@ exports.newSession = async (req, res) => {
 }
 
 
+
 exports.getSession = async (req, res) => {
     try {
-        const sessionId = parseInt(req.params.sessionId)
+        const sessionId = req.params.sessionId
         let session = await getSessionById(sessionId)
         if (session) {
             const lastSpin = await getLastSpinBySessionId(sessionId)
@@ -60,79 +62,41 @@ exports.getSessions = async (req, res) => {
 exports.stopSession = async (req, res) => {
     try {
         const sessionId = req.params.sessionId
-        const update = await updateSessionById(sessionId)
+        const update = await Session.findByIdAndUpdate(sessionId, { stop_time: new Date() })
         if (!update) throw new Error('update session error')
         res.json(true)
     } catch (error) { res.status(400).json({message: error.message}) }
 }
 
 
-
-exports.updateSession = async (newSessionObj) => {
-    console.log(newSessionObj.session_id)
-    console.log(newSessionObj.bet)
-    console.log(newSessionObj.score)
-    // let newCoins = 
-    // const result = await updateSessionById(sessionId)
-    // return result
-    return true 
-}
-
-// exports.updateSession = async (sessionId) => {
-//     const result = await updateSessionById(sessionId)
-//     return result
-// }
-
-const updateSessionById = async (sessionId) => {
-    const knex = require('knex')(db_config)
-    const rows = await knex('sessions')
-        .where('id', sessionId)
-        .update('stop_time', new Date().toLocaleDateString())
-    knex.destroy()
-    return rows
-}
-
-
 const newSession = async () => {
-    const knex = require('knex')(db_config)
-    const sessionId = (await knex('sessions').insert(getNewSession())).pop()
-    knex.destroy()
-    if (!sessionId) throw new Error('Get new session id error')
-    return sessionId
+    const session = getNewSession()
+    const result = await session.save()
+    return result._id.toString()
 }
 
 
 const getSessionById = async (sessionId) => {
-    const knex = require('knex')(db_config)
-    const session = (await knex
-        .from('sessions')
-        .select('id', 'start_time', 'stop_time', 'coins', 'bet', 'win')
-        .where('id', sessionId)).pop()
-    knex.destroy()
+    const session = await Session.findById(sessionId);
     if (!session) throw new Error('Get session by id error')
     return session
 }
 
 
 const getLastSpinBySessionId = async (sessionId) => {
-    const knex = require('knex')(db_config)
-    const spin = (await knex
-        .from('spins')
-        .select('id', 'session_id', 'time')
-        .where('session_id', sessionId)).pop()
-    knex.destroy()
-    return spin
+    const spins = await Spin.findById(sessionId)
+    return spins ? spins.pop() : null
 }
 
 
 const getNewSession = () => {
-    return {
-        start_time: new Date().toLocaleDateString(),
-        stop_time: new Date().toLocaleDateString(),
-        coins: 100,
-        bet: 1,
-        win: 0
-    }
+    const session = new Session()
+    session.start_time = new Date()
+    session.stop_time = new Date()
+    session.coins = 100
+    session.bet = 1
+    session.win = 0
+    return session
 }
 
 

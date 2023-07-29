@@ -1,6 +1,7 @@
 const scoreGenerator = require('../modules/ScoreGenerator')
 const sessionController = require('./sessionController')
-const {db_config} = require('../config')
+const Session = require('../model/Session')
+const Spin = require('../model/Spin')
 
 // BET
 
@@ -39,41 +40,15 @@ exports.transfer = async (req, res) => {
         if (!transfer) throw new Error('transfer error')
         if (transfer > sessionData.win) throw new Error('not enough win')
         const state = {
-            id: sessionId,
             coins: sessionData.coins + transfer,
             bet: sessionData.bet,
             win: sessionData.win - transfer
         }
-        updateState(state)
+        updateState(state, sessionId)
         res.status(200).json(true)
     }
     catch (error) { res.status(400).json({message: error.message}) }
 }
-
-// exports.transfer = async (req, res) => {
-//     try {
-//         const sessionId = req.params.sessionId
-//         const sessionData = req.data
-//         const transfer = parseInt(req.body.transfer)
-//         if (!transfer) throw new Error('transfer error')
-//         if (transfer <= sessionData.win) {
-//             let win = await updateWinBySessionId(sessionId, sessionData.win - transfer) 
-//             let coins = await updateCoinsBySessionId(sessionId, sessionData.coins + transfer)
-//             if (win && coins || parseInt(win) === 0) {
-//                 const spin = await addSpin(sessionId, transfer, -1)
-//                 console.log(`session: ${sessionId} - transfering: ${transfer} coins`)
-//                 if (spin) res.json({
-//                     coins: coins,
-//                     bet: sessionData.bet,
-//                     win: win
-//                 })
-//                 else throw new Error('spin error')
-//             } else throw new Error('transfer - pdate win, coins error')
-//         } else throw new Error('not enough win')
-//     }
-//     catch (error) { res.status(400).json({message: error.message}) }
-// }
-
 
 
 // SPIN
@@ -88,12 +63,12 @@ exports.spin = async (req, res) => {
             return
         }
         const state = {
-            id: sessionId,
             coins: sessionData.coins - sessionData.bet,
             bet: sessionData.bet,
             win: sessionData.win + score*sessionData.bet
         }
-        updateState(state)
+        addSpin(sessionId, score, state.bet)
+        updateState(state, sessionId)
         res.status(200).json(score)
     }
     catch (error) {
@@ -103,82 +78,25 @@ exports.spin = async (req, res) => {
 }
 
 
-const updateState = (state) =>
+const updateState = (state, sessionId) =>
     new Promise(async (resolve, reject) => {
-
-        const knex = require('knex')(db_config)
-        const row = await knex('sessions')
-            .where('id', state.id)
-            .update('coins', state.coins)
-            .update('win', state.win)
-        knex.destroy()
-
-        console.log(state)
-
-        if (row) resolve()
+        const newState = await Session.findByIdAndUpdate(sessionId, state)
+        if (newState) resolve()
         else reject()
-
     })
-
-// const updateStateServerSide = (score, sessionData) =>
-//     new Promise(async (resolve, reject) => {
-
-//         sessionData.coins -= sessionData.bet
-//         sessionData.win += score*sessionData.bet
-
-//         const knex = require('knex')(db_config)
-
-//         const row = await knex('sessions')
-//             .where('id', sessionData.id)
-//             .update('coins', sessionData.coins)
-//             .update('win', sessionData.win)
-
-//         knex.destroy()
-
-//         console.log(`sessionId: ${sessionData.id}, score: ${score}, coins: ${sessionData.coins}, win: ${sessionData.win}`)
-
-//         if (row) resolve()
-//         else reject()
-
-//     })
 
 
 const  updateBetBySessionId = async (sessionId, bet) => {
-    const knex = require('knex')(db_config)
-    const row = await knex('sessions')
-        .where('id', sessionId)
-        .update('bet', bet)
-    knex.destroy()
-    if (row) return true
+    const result = await Session.findByIdAndUpdate(sessionId, { bet })
+    if (result) return true
     else throw new Error('update bet error')
 }
 
-const updateWinBySessionId = async (sessionId, win) => {
-    const knex = require('knex')(db_config)
-    const rows = await knex('sessions')
-        .where('id', sessionId)
-        .update('win', win)
-    knex.destroy()
-    return rows? win : false
-}
-
-const updateCoinsBySessionId = async (sessionId, coins) => {
-    const knex = require('knex')(db_config)
-    const rows = await knex('sessions')
-        .where('id', sessionId)
-        .update('coins', coins)
-    knex.destroy()
-    return rows? coins : false
-}
-
 const addSpin = async (_sessionId, _score, _bet) => {
-    const spin = {
-        session_id: _sessionId,
-        score: _score,
-        bet: _bet
-    }
-    const knex = require('knex')(db_config)
-    const spinId = await knex('spins').insert(spin)
-    knex.destroy()
-    return spinId? spin : false
+    const spin = new Spin()
+    spin.session_id = _sessionId
+    spin.score = _score
+    spin.bet = _bet
+    const result = await spin.save()
+    return result ? spin : false
 }

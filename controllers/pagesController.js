@@ -1,5 +1,7 @@
-const {db_config} = require('../config')
 const path = require('path')
+
+const Session = require('../model/Session')
+const Spin = require('../model/Spin')
 
 exports.home = (req, res) => {
     const _path = path.resolve() + '/public/html/home.html'
@@ -25,11 +27,6 @@ exports.sessionSpins = async (req, res) => {
 }
 
 const getSpinsBySessionId = async (sessionId) => {
-    const knex = require('knex')(db_config)
-    const rows = await knex
-        .from('spins')
-        .select('id', 'session_id', 'time', 'score', 'bet')
-        .where('session_id', sessionId)
-    knex.destroy()
-    return rows.length > 0 ? rows : false
+    const result = await Spin.find({ session_id: sessionId })
+    return result.length > 0 ? result : false
 }

@@ -36,13 +36,13 @@ const generateSessionElement = async (sessionData, i) => {
     const removeButton = document.createElement('button')
 
     const graph = document.createElement('canvas')
-    graph.setAttribute('id', 'graph-' + sessionData.id)
+    graph.setAttribute('id', 'graph-' + sessionData._id)
 
     const graphContainer = document.createElement('div')
     graphContainer.classList.add('graph-container')
     graphContainer.appendChild(graph)
 
-    const spins = await http.sessionSpins(sessionData.id)
+    const spins = await http.sessionSpins(sessionData._id)
     
     lp.innerHTML = i+1
     date.innerHTML = new Date(sessionData.start_time).toLocaleDateString()
@@ -53,8 +53,8 @@ const generateSessionElement = async (sessionData, i) => {
     totalCoins.innerHTML = '100'
     totalWin.innerHTML = getTotalWin(spins)
     spinsNumber.innerHTML = Array.isArray(spins) ? spins.length : 0
-    openButton.addEventListener('click', (event) => onOpenButton(event, sessionData.id))
-    removeButton.addEventListener('click', (event) => onRemoveButton(event, sessionData.id))
+    openButton.addEventListener('click', (event) => onOpenButton(event, sessionData._id))
+    removeButton.addEventListener('click', (event) => onRemoveButton(event, sessionData._id))
     openButton.innerHTML = 'open'
     removeButton.innerHTML = 'remove'
 
@@ -74,7 +74,7 @@ const generateSessionElement = async (sessionData, i) => {
     sessionEl.appendChild(container)
     sessionEl.appendChild(graphContainer)
     sessionEl.classList.add('session')
-    sessionEl.setAttribute('id', sessionData.id)
+    sessionEl.setAttribute('id', sessionData._id)
     return sessionEl
 }
 
@@ -97,7 +97,7 @@ const onOpenButton = (event, sessionId) => {
 
 
 const onRemoveButton = (event, sessionId) => {
-    sessionManager.removeFromSessions(parseInt(sessionId))
+    sessionManager.removeFromSessions(sessionId)
     document.getElementById(sessionId).remove()
 }
 

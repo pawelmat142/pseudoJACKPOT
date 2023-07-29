@@ -169,7 +169,6 @@ export class Graph {
             this.ctx.fillText(config.name, x0+i*(legendPartWidth+gap)+ legendPartWidth/3*2 + 10, this.height + this.legendHeight/2 + 5)
             this.ctx.moveTo(x0 + i*(legendPartWidth+gap), this.height - this.legendHeight / 2)
             this.ctx.lineTo(x0 + i*(legendPartWidth+gap) + legendPartWidth/3*2, this.height - this.legendHeight / 2)
-            console.log(this.ctx.font)
             this.ctx.stroke()
             this.ctx.closePath()
         })

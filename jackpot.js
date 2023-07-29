@@ -1,11 +1,13 @@
 const express = require('express')
 const router = require('./router')
 const path = require('path')
-const {port} = require('./config')
+const { port } = require('./config')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const flash = require('connect-flash')
 const cors = require('cors')
+
+require('./mongoose')
 
 const app = express()
 

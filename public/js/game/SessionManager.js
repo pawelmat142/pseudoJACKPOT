@@ -10,16 +10,16 @@ export class SessionManager {
 
 
     set id(_id) {
-        if (_id >= 0) {
-            localStorage.setItem('sessionId', parseInt(_id))
-            this.addToSessions(parseInt(_id))
+        if (_id) {
+            localStorage.setItem('sessionId', _id)
+            this.addToSessions(_id)
         }
         this.http.sessionId = _id
     }
     
     
     get id() {
-        return !!localStorage.getItem('sessionId') ? parseInt(localStorage.getItem('sessionId')) : -1
+        return !!localStorage.getItem('sessionId') ? localStorage.getItem('sessionId') : -1
     }
 
 
@@ -30,14 +30,14 @@ export class SessionManager {
 
     get sessions() {
         const a = !!localStorage.getItem('sessions') ? localStorage.getItem('sessions').split(',') : false
-        if (Array.isArray(a)) return a.map(x => parseInt(x))
+        if (Array.isArray(a)) return a
         else return false
     }
 
 
     init = async () => {
         const sessionData = await this.http.getSessionData()
-        this.id = sessionData.id
+        this.id = sessionData._id.toString()
         this.ready = true
         return sessionData
     }
@@ -48,15 +48,16 @@ export class SessionManager {
         if (stopped) {
             this.id = -1
             const sessionData = await this.http.getSessionData()
-            this.id = sessionData.id
+            this.id = sessionData._id.toString()
             return sessionData
         } else console.log('reset error')
     }
 
 
     addToSessions = (id) => {
+        if (id < 0) return
         if (this.sessions) {
-            if (!this.sessions.includes(id)) this.sessions = [...this.sessions, id]
+            if (!this.sessions.includes(id)) this.sessions = [...this.sessions, id.toString()]
         }
         else this.sessions = [id]
     }

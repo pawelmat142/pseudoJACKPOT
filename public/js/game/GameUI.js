@@ -232,7 +232,7 @@ export class GameUI {
         this.board.spinFlag = false
         const input = document.getElementById('modal').querySelector('input')
         const transfer = parseInt(input.value)
-        const transfered = await this.http.transfer({"transfer": input.value})
+        const transfered = await this.http.transfer({ "transfer": input.value })
         this.modal.close()
         if (transfered) {
             this.coins.animateTo(this.coins.get()+transfer, config.ui.transferTime, true)
@@ -240,18 +240,6 @@ export class GameUI {
         }
         this.board.spinFlag = true
     }
-
-    // transferAction = async (e) => {
-    //     this.board.spinFlag = false
-    //     const input = document.getElementById('modal').querySelector('input')
-    //     const response = await this.http.transfer({"transfer": input.value})
-    //     this.modal.close()
-    //     if (parseInt(response.win) !== this.win.get()) {
-    //         this.coins.animateTo(response.coins, config.ui.transferTime, true)
-    //         await this.win.animateTo(response.win, config.ui.transferTime, false)
-    //     }
-    //     this.board.spinFlag = true
-    // }
 
     onInputTransfer = (e, input) => {
         if (input.value > this.win.get()) input.value = this.win.get()

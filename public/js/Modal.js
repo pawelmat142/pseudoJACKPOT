@@ -79,12 +79,6 @@ export class Modal {
         
     }
 
-    isOkButton = () => {
-        const a = document.getElementById('modal')
-        console.log(a)
-    }
-
-
     removeOkButton = () => {
         const b = document.getElementById('ok-button')
         if (b) b.remove()

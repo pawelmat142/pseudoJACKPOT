@@ -45,7 +45,7 @@ export class SessionDiagram {
                 this.steps = getSteps(spins)
             }
             this.printSteps(this.steps)
-        } else console.log('not array')
+        }
     }
 
 
