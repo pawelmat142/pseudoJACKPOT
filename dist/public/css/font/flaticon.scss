@@ -1,0 +1,65 @@
+$flaticon-font: "flaticon";
+
+@font-face {
+    font-family: $flaticon-font;
+    src: url("./flaticon.ttf?1a4a310dcee974446313293110c876b3") format("truetype"),
+url("./flaticon.woff?1a4a310dcee974446313293110c876b3") format("woff"),
+url("./flaticon.woff2?1a4a310dcee974446313293110c876b3") format("woff2"),
+url("./flaticon.eot?1a4a310dcee974446313293110c876b3#iefix") format("embedded-opentype"),
+url("./flaticon.svg?1a4a310dcee974446313293110c876b3#flaticon") format("svg");
+}
+
+i[class^="flaticon-"]:before, i[class*=" flaticon-"]:before {
+    font-family: flaticon !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+$flaticon-map: (
+    "plus": "\f101",
+    "minus": "\f102",
+    "money": "\f103",
+    "jackpot": "\f104",
+    "cherry": "\f105",
+    "jackpot-1": "\f106",
+    "jackpot-2": "\f107",
+    "gambling-chips-variant": "\f108",
+    "medium-volume": "\f109",
+    "volume": "\f10a",
+);
+
+.flaticon-plus:before {
+    content: map-get($flaticon-map, "plus");
+}
+.flaticon-minus:before {
+    content: map-get($flaticon-map, "minus");
+}
+.flaticon-money:before {
+    content: map-get($flaticon-map, "money");
+}
+.flaticon-jackpot:before {
+    content: map-get($flaticon-map, "jackpot");
+}
+.flaticon-cherry:before {
+    content: map-get($flaticon-map, "cherry");
+}
+.flaticon-jackpot-1:before {
+    content: map-get($flaticon-map, "jackpot-1");
+}
+.flaticon-jackpot-2:before {
+    content: map-get($flaticon-map, "jackpot-2");
+}
+.flaticon-gambling-chips-variant:before {
+    content: map-get($flaticon-map, "gambling-chips-variant");
+}
+.flaticon-medium-volume:before {
+    content: map-get($flaticon-map, "medium-volume");
+}
+.flaticon-volume:before {
+    content: map-get($flaticon-map, "volume");
+}

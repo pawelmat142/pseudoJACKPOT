@@ -1,0 +1,78 @@
+#top-light {
+    position: absolute;
+    z-index: 12;
+    top: 23.5%;
+    left: 49.8%;
+    width: 0;
+    height: 0;
+    animation: top-light 2s ease-in-out infinite 4s;
+}
+
+@keyframes top-light {
+    0% { box-shadow: 0px 0px 0 #c8ff00; }
+    5% { box-shadow: 0px 0px 150px 30px #c8ff00; }
+    10% { box-shadow: 0px 0px 0 #c8ff00; }
+    15% { box-shadow: 0px 0px 150px 40px #c8ff00; }
+    20% { box-shadow: 0px 0px 0 #c8ff00; }
+}
+
+.lights > * {
+    position: absolute;
+    z-index: 12;
+    width: 0;
+    height: 0;
+    transition: .2s ease-in-out;
+}
+
+.lights .blue:nth-of-type(1) {
+    top: 53%;
+    left: 5.5%;
+    animation: blue-light-1 .5s ease-in-out infinite;
+}
+
+.lights .blue:nth-of-type(2) {
+    top: 51.5%;
+    left: 11%;
+    animation: blue-light 1.2s ease-in-out infinite .2s;
+}
+
+.lights .blue:nth-of-type(3) {
+    top: 44.5%;
+    left: 12.5%;
+    animation: blue-light .8s ease-in-out infinite .6s;
+}
+
+.lights .blue:nth-of-type(4) {
+    top: 38.8%;
+    left: 16.5%;
+    animation: blue-light-1 .1s ease-in-out infinite .1s;
+    opacity: .5;
+}
+
+.lights .blue:nth-of-type(5) {
+    top: 48.2%;
+    left: 89%;
+    animation: blue-light .5s ease-in-out infinite .1s;
+    opacity: .7;
+}
+
+.lights .blue:nth-of-type(6) {
+    top: 50.5%;
+    left: 95.2%;
+    animation: blue-light .1s ease-in-out infinite .1s;
+    opacity: .3;
+}
+
+.lights .blue:nth-of-type(7) {
+    top: 38.5%;
+    left: 87.2%;
+    animation: blue-light-1 1s ease-in-out infinite .1s;
+}
+
+@keyframes blue-light {
+    50% { box-shadow: 0px 0px 20px 10px #2d5cd1; }
+}
+
+@keyframes blue-light-1 {
+    50% { box-shadow: 0px 0px 50px 10px #2d5cd1; }
+}

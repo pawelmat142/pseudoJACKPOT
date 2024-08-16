@@ -1,0 +1,30 @@
+{
+  "name": "gra",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Paweł Małek",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.2",
+    "connect": "^3.7.0",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
+    "hbs": "^4.2.0",
+    "knex": "^1.0.3",
+    "mongoose": "^7.4.1",
+    "mysql2": "^2.3.3",
+    "vhost": "^3.0.2"
+  },
+  "repository": "git+https://github.com/pawelmat142/gra.git",
+  "bugs": {
+    "url": "https://github.com/pawelmat142/gra/issues"
+  },
+  "homepage": "https://github.com/pawelmat142/gra#readme",
+  "description": ""
+}

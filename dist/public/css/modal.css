@@ -1,0 +1,123 @@
+:root { --modal-time: .2s}
+
+#modal-bg {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background: #000c;
+    top: 0;
+    left: 0;
+    transform: scaleX(0) scaleY(0);
+    z-index: -10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#modal-bg.open {
+    z-index: 9999;
+    animation: modalOn var(--modal-time) ease-in-out forwards;
+}
+
+#modal-bg.close {
+    transform: scaleX(1) scaleY(1);
+    animation: modalOff var(--modal-time) ease-in-out forwards calc(var(--modal-time) / 2);
+}
+
+@keyframes modalOn {
+    0% { transform: scaleX(.001) scaleY(0); opacity: 0;}
+    50% { transform: scaleX(1) scaleY(.01)}
+    100% { transform: scaleX(1) scaleY(1); opacity: 1;}
+}
+
+@keyframes modalOff {
+    0% { transform: scaleX(1) scaleY(1)}
+    50% { transform: scaleX(1) scaleY(.01)}
+    100% { transform: scaleX(0) scaleY(0)}
+}
+
+#modal-bg > div {
+    background: #a4a4a4c9;
+    padding: 30px 50px;
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    transform: scale(0);
+    min-width: 400px;
+    min-height: 270px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#modal-bg.open > div {animation: inModalOn calc(var(--modal-time) / 2) ease-in-out forwards var(--modal-time) }
+
+#modal-bg.close > div { animation: inModalOff calc(var(--modal-time) / 2) ease-in-out forwards }
+
+
+@keyframes inModalOn {
+    from {transform: scale(0)}
+    to {transform: scale(1)}
+}
+
+@keyframes inModalOff {
+    from {transform: scale(1)}
+    to {transform: scale(0)}
+}
+
+#modal-bg > div > * { margin-bottom: 15px;}
+
+#modal-bg button {
+    padding: 5px 30px;
+    border-radius: 7px;
+    font-size: 20px;
+    line-height: 25px;
+    cursor: pointer;
+    text-align: center;
+    transition: .2s ease;
+    border: 2px solid #003e85bf;
+    background: #003e85bf;
+    color: #fff; 
+}
+
+
+#modal-bg .close-button {
+    border: 2px solid #850000bf;
+    background: #850000bf;
+}
+
+
+#modal-bg button:hover { background: transparent }
+
+
+/* content */
+#modal-bg #modal > * {margin-bottom: 15px;}
+
+
+#modal-bg #modal h3 {
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+
+#modal-bg #modal input {
+    width: 100%;
+    padding: 5px 30px;
+    border-radius: 7px;
+    border: 2px solid #003e85bf;
+    font-size: 20px;
+    line-height: 25px;
+    background: #f6faffbf;
+    cursor: pointer;
+}
+
+
+
+/* MOBILE */
+#modal-bg.mobile > div {
+    width: 90%;
+    min-width: 90%;
+}
+
+

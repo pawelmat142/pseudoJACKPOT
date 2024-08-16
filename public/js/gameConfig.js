@@ -1,4 +1,4 @@
-{
+export const config = {
   "board": {
     "rows": 3,
     "cols": 3
