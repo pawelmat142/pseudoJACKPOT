@@ -7,7 +7,7 @@
 * [Setup](#setup)
 
 ## General info
- This app is available here: [jackpot](https://jackpot.pppmmm.pl/) <br />
+ This app is available here: [jackpot](http://77.237.244.101:8001/) <br />
  The motivation to create the application was to broaden the skills and do the first project for the portfolio. During its implementation, I expanded my JavaScript knowledge and learned the basics of Node.js v17.4.0. On a VPS based on Ubuntu v21.10, I learned how to:
 - install the Node.js application
 - install the MySQL database
