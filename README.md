@@ -33,3 +33,5 @@ $ cd pseudoJackpot
 $ npm install
 $ node jackpot.js
 ```
+
+open web browser and go to: http://localhost:8001/
