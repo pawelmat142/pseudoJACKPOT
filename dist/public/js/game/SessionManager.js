@@ -38,7 +38,7 @@ export class SessionManager {
     init = async () => {
         const sessionData = await this.http.getSessionData()
         if (sessionData) {
-            this.id = sessionData._id.toString()
+            this.id = sessionData?._id.toString()
             this.ready = true
             return sessionData
         }
@@ -50,7 +50,7 @@ export class SessionManager {
         if (stopped) {
             this.id = -1
             const sessionData = await this.http.getSessionData()
-            this.id = sessionData._id.toString()
+            this.id = sessionData?._id.toString()
             return sessionData
         } else console.log('reset error')
     }
